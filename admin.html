@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Aviator Admin & Game Server</title>
+    <style>
+        body { background: #0b0e14; color: white; font-family: sans-serif; padding: 30px; }
+        .card { background: #161b26; padding: 20px; border-radius: 12px; border: 1px solid #333; max-width: 500px; margin: 0 auto; text-align: center; }
+        .status { font-size: 1.5rem; margin: 20px 0; color: #43a047; font-weight: bold; }
+        .btn-crash { background: #e53935; color: white; border: none; padding: 16px 32px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
+        .btn-crash:hover { background: #c62828; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>✈️ AVIATOR GAME SERVER CONTROL</h2>
+        <div class="status" id="server-status">Game Status: Waiting...</div>
+        <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 20px;" id="current-mult">1.00x</div>
+        <button class="btn-crash" id="force-crash-btn">🔥 FORCE CRASH NOW</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyTOnCm5IuPcB-yvGjFl3KbwRVxNrcNSY",
+            authDomain: "ff-to-gaming-4ea1b.firebaseapp.com",
+            databaseURL: "https://ff-to-gaming-4ea1b-default-rtdb.firebaseio.com",
+            projectId: "ff-to-gaming-4ea1b",
+            storageBucket: "ff-to-gaming-4ea1b.appspot.com",
+            messagingSenderId: "816776130875",
+            appId: "1:816776130875:web:c3e7984e0de53cbd89871e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let isForceCrashed = false;
+        let gameLoopActive = false;
+
+        const serverStatus = document.getElementById('server-status');
+        const currentMultDisplay = document.getElementById('current-mult');
+        const forceCrashBtn = document.getElementById('force-crash-btn');
+
+        forceCrashBtn.addEventListener('click', () => {
+            isForceCrashed = true;
+        });
+
+        function generateCrashPoint() {
+            const e = Math.random();
+            if (e < 0.08) return 1.00;
+            return parseFloat((1 + Math.pow(e, 2) * 15).toFixed(2));
+        }
+
+        async function runAutoGameLoop() {
+            if(gameLoopActive) return;
+            gameLoopActive = true;
+
+            while (true) {
+                // Phase 1: Waiting
+                isForceCrashed = false;
+                serverStatus.innerText = "Status: Waiting for players...";
+                
+                for (let i = 5; i > 0; i--) {
+                    await set(ref(db, 'gameState'), { status: 'waiting', countdown: i, multiplier: 1.00 });
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+
+                // Phase 2: Running
+                const crashPoint = generateCrashPoint();
+                serverStatus.innerText = `Status: Running (Crash target: ${crashPoint}x)`;
+                
+                let startTime = Date.now();
+                let currentMult = 1.00;
+
+                while (currentMult < crashPoint && !isForceCrashed) {
+                    let elapsed = (Date.now() - startTime) / 1000;
+                    currentMult = parseFloat((1 + Math.pow(elapsed, 1.7) * 0.12).toFixed(2));
+                    
+                    currentMultDisplay.innerText = currentMult.toFixed(2) + "x";
+                    await update(ref(db, 'gameState'), { status: 'running', multiplier: currentMult });
+                    await new Promise(r => setTimeout(r, 100));
+                }
+
+                // Phase 3: Crashed
+                serverStatus.innerText = "Status: CRASHED!";
+                await set(ref(db, 'gameState'), { status: 'crashed', multiplier: currentMult });
+                await new Promise(r => setTimeout(r, 3000));
+            }
+        }
+
+        runAutoGameLoop();
+    </script>
+</body>
+</html>
