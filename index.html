@@ -2,13 +2,11 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Red vs Blue - Demo Spin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Red vs Blue — Demo</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -16,116 +14,148 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  background:#080b12;
-  color:white;
+  background:#070a11;
+  color:#fff;
   font-family:Arial,sans-serif;
 }
 
-.container{
-  width:min(92%,420px);
+.app{
+  width:min(94%,430px);
   text-align:center;
 }
 
 h1{
-  margin-bottom:8px;
+  margin:0 0 5px;
+  font-size:27px;
 }
 
-.subtitle{
-  color:#9da5b5;
-  margin-bottom:20px;
+.sub{
+  color:#8d98aa;
+  margin-bottom:18px;
 }
 
-.coin-box{
+.coin{
   background:#111827;
-  border:1px solid #263044;
-  border-radius:15px;
+  border:1px solid #293449;
+  border-radius:14px;
   padding:12px;
-  margin-bottom:20px;
+  margin-bottom:25px;
   font-size:18px;
 }
 
-#coins{
+.coin span{
   color:#ffd43b;
   font-weight:bold;
 }
 
 /* Wheel */
-.wheel-area{
+
+.wheel-wrap{
   position:relative;
-  width:280px;
-  height:280px;
-  margin:25px auto;
+  width:310px;
+  height:310px;
+  margin:auto;
 }
 
 .pointer{
   position:absolute;
-  top:-15px;
+  z-index:10;
+  top:-13px;
   left:50%;
   transform:translateX(-50%);
-  z-index:5;
-
   width:0;
   height:0;
-  border-left:15px solid transparent;
-  border-right:15px solid transparent;
-  border-top:32px solid #fff;
-
-  filter:drop-shadow(0 2px 4px #000);
+  border-left:17px solid transparent;
+  border-right:17px solid transparent;
+  border-top:34px solid white;
+  filter:drop-shadow(0 3px 4px #000);
 }
 
 .wheel{
-  width:280px;
-  height:280px;
+  position:relative;
+  width:310px;
+  height:310px;
   border-radius:50%;
+  border:9px solid #242c3c;
+  overflow:hidden;
 
   background:conic-gradient(
-    #e63946 0deg 180deg,
-    #1769e0 180deg 360deg
+    #e63946 0deg 36deg,
+    #1769e0 36deg 72deg,
+    #e63946 72deg 108deg,
+    #1769e0 108deg 144deg,
+    #e63946 144deg 180deg,
+    #1769e0 180deg 216deg,
+    #e63946 216deg 252deg,
+    #1769e0 252deg 288deg,
+    #e63946 288deg 324deg,
+    #1769e0 324deg 360deg
   );
 
-  border:8px solid #252c3b;
   box-shadow:
     0 0 0 4px #111827,
     0 0 35px rgba(255,255,255,.12);
 
-  transition:transform 4s cubic-bezier(.12,.75,.18,1);
+  transition:transform 4.5s cubic-bezier(.12,.78,.16,1);
 }
 
-.wheel::after{
+/* Slot separator lines */
+
+.wheel::before{
   content:"";
   position:absolute;
-  width:65px;
-  height:65px;
-  background:#111827;
-  border:5px solid #fff;
+  inset:0;
   border-radius:50%;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      transparent 0deg 35.2deg,
+      rgba(255,255,255,.8) 35.2deg 36deg
+    );
+}
+
+/* Center */
+
+.center{
+  position:absolute;
+  z-index:5;
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:#101522;
+  border:5px solid white;
   left:50%;
   top:50%;
   transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  box-shadow:0 3px 15px rgba(0,0,0,.5);
 }
 
-.bet-title{
-  margin-top:20px;
-  color:#cbd5e1;
+/* Bet controls */
+
+.label{
+  margin:25px 0 10px;
+  color:#aeb7c7;
 }
 
-.buttons{
+.colors{
   display:flex;
   gap:12px;
-  justify-content:center;
-  margin:15px 0;
 }
 
-.bet-btn{
+.color-btn{
   flex:1;
-  max-width:150px;
-  padding:13px;
   border:0;
-  border-radius:10px;
+  border-radius:11px;
+  padding:14px;
   color:white;
   font-size:17px;
   font-weight:bold;
   cursor:pointer;
+  transition:.2s;
 }
 
 .red{
@@ -136,167 +166,390 @@ h1{
   background:#1769e0;
 }
 
-.selected{
-  outline:3px solid #fff;
+.color-btn.selected{
+  outline:3px solid white;
   transform:scale(1.03);
 }
 
-.amount-box{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin:15px 0;
-}
-
-.amount-box input{
-  width:150px;
-  padding:12px;
-  border:1px solid #334155;
-  border-radius:8px;
-  background:#0f172a;
+.amount{
+  width:100%;
+  margin:13px 0;
+  padding:13px;
+  border-radius:10px;
+  border:1px solid #344054;
+  background:#101725;
   color:white;
-  font-size:16px;
+  font-size:17px;
   text-align:center;
 }
 
-#spinBtn{
+.spin{
   width:100%;
   padding:15px;
   border:0;
   border-radius:11px;
-  background:linear-gradient(90deg,#ffcc00,#ff6600);
+  background:linear-gradient(90deg,#ffd000,#ff6a00);
   color:#111;
-  font-size:18px;
+  font-size:19px;
   font-weight:bold;
   cursor:pointer;
 }
 
-#spinBtn:disabled{
+.spin:disabled{
   opacity:.5;
+  cursor:not-allowed;
 }
 
-#result{
-  min-height:30px;
+.sound{
+  margin-top:12px;
+  background:#1b2434;
+  color:white;
+  border:1px solid #334155;
+  border-radius:9px;
+  padding:10px 16px;
+  cursor:pointer;
+}
+
+.result{
+  min-height:52px;
   margin-top:18px;
-  font-size:20px;
+  font-size:19px;
+  font-weight:bold;
+  line-height:1.5;
+}
+
+.history{
+  margin-top:12px;
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.history span{
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:12px;
   font-weight:bold;
 }
 
 .note{
+  color:#667085;
+  font-size:11px;
   margin-top:15px;
-  color:#7f8a9d;
-  font-size:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
   <h1>🔴 Red vs 🔵 Blue</h1>
-  <div class="subtitle">Demo Spin Game</div>
+  <div class="sub">10 Slot Spin Demo</div>
 
-  <div class="coin-box">
+  <div class="coin">
     🪙 Demo Coins:
     <span id="coins">1000</span>
   </div>
 
-  <div class="wheel-area">
+  <div class="wheel-wrap">
+
     <div class="pointer"></div>
-    <div id="wheel" class="wheel"></div>
+
+    <div id="wheel" class="wheel">
+      <div class="center">🎯</div>
+    </div>
+
   </div>
 
-  <div class="bet-title">
-    তোমার কালার নির্বাচন করো
-  </div>
+  <div class="label">Color নির্বাচন করো</div>
 
-  <div class="buttons">
-    <button class="bet-btn red" onclick="selectColor('red')">
+  <div class="colors">
+
+    <button
+      id="redBtn"
+      class="color-btn red"
+      onclick="selectColor('red')">
       🔴 RED
     </button>
 
-    <button class="bet-btn blue" onclick="selectColor('blue')">
+    <button
+      id="blueBtn"
+      class="color-btn blue"
+      onclick="selectColor('blue')">
       🔵 BLUE
     </button>
+
   </div>
 
-  <div class="amount-box">
-    <input
-      id="amount"
-      type="number"
-      min="1"
-      value="50"
-      placeholder="Demo Coin"
-    >
-  </div>
+  <input
+    id="amount"
+    class="amount"
+    type="number"
+    min="1"
+    value="50"
+    placeholder="Demo Coin"
+  >
 
-  <button id="spinBtn" onclick="spin()">
-    🎯 SPIN
+  <button
+    id="spinBtn"
+    class="spin"
+    onclick="spin()">
+    🎡 SPIN
   </button>
 
-  <div id="result"></div>
+  <button
+    id="soundBtn"
+    class="sound"
+    onclick="toggleSound()">
+    🔊 Sound ON
+  </button>
+
+  <div id="result" class="result">
+    প্রথমে একটি Color নির্বাচন করো
+  </div>
+
+  <div id="history" class="history"></div>
 
   <div class="note">
-    এটি শুধুমাত্র শেখার জন্য একটি Demo — আসল টাকা ব্যবহার করে না।
+    Educational Demo — কোনো real-money betting নেই।
   </div>
 
 </div>
 
+
 <script>
+
+/* =========================
+   GAME STATE
+========================= */
 
 let coins = 1000;
 let selectedColor = null;
-let rotation = 0;
 let spinning = false;
 
+let rotation = 0;
+
+let soundEnabled = true;
+let audioContext = null;
+
 const wheel = document.getElementById("wheel");
-const result = document.getElementById("result");
-const coinsText = document.getElementById("coins");
+const coinsEl = document.getElementById("coins");
+const resultEl = document.getElementById("result");
 const spinBtn = document.getElementById("spinBtn");
+const soundBtn = document.getElementById("soundBtn");
+const historyEl = document.getElementById("history");
+
+
+/* =========================
+   SOUND SYSTEM
+========================= */
+
+function getAudio(){
+
+  if(!audioContext){
+
+    audioContext =
+      new (window.AudioContext ||
+           window.webkitAudioContext)();
+
+  }
+
+  if(audioContext.state === "suspended"){
+    audioContext.resume();
+  }
+
+  return audioContext;
+}
+
+
+function beep(
+  frequency = 500,
+  duration = .08,
+  type = "sine",
+  volume = .035
+){
+
+  if(!soundEnabled) return;
+
+  const ctx = getAudio();
+
+  const oscillator =
+    ctx.createOscillator();
+
+  const gain =
+    ctx.createGain();
+
+  oscillator.type = type;
+  oscillator.frequency.value = frequency;
+
+  gain.gain.setValueAtTime(
+    volume,
+    ctx.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    ctx.currentTime + duration
+  );
+
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+
+  oscillator.start();
+
+  oscillator.stop(
+    ctx.currentTime + duration
+  );
+}
+
+
+/* Spin sound */
+
+function spinSound(){
+
+  if(!soundEnabled) return;
+
+  let count = 0;
+
+  const timer =
+    setInterval(() => {
+
+      beep(
+        180 + count * 20,
+        .055,
+        "square",
+        .025
+      );
+
+      count++;
+
+      if(count >= 25){
+        clearInterval(timer);
+      }
+
+    },155);
+}
+
+
+/* Result sound */
+
+function resultSound(win){
+
+  if(win){
+
+    beep(600,.12,"sine",.04);
+
+    setTimeout(
+      () => beep(850,.16,"sine",.04),
+      120
+    );
+
+  }else{
+
+    beep(220,.2,"sawtooth",.025);
+
+  }
+}
+
+
+function toggleSound(){
+
+  soundEnabled = !soundEnabled;
+
+  soundBtn.textContent =
+    soundEnabled
+      ? "🔊 Sound ON"
+      : "🔇 Sound OFF";
+
+}
+
+
+/* =========================
+   COLOR SELECTION
+========================= */
 
 function selectColor(color){
 
+  if(spinning) return;
+
   selectedColor = color;
 
-  document.querySelectorAll(".bet-btn")
-    .forEach(btn => btn.classList.remove("selected"));
+  document
+    .getElementById("redBtn")
+    .classList.remove("selected");
+
+  document
+    .getElementById("blueBtn")
+    .classList.remove("selected");
 
   if(color === "red"){
-    document.querySelector(".red")
+
+    document
+      .getElementById("redBtn")
       .classList.add("selected");
+
+    resultEl.textContent =
+      "🔴 RED নির্বাচন করা হয়েছে";
+
   }else{
-    document.querySelector(".blue")
+
+    document
+      .getElementById("blueBtn")
       .classList.add("selected");
+
+    resultEl.textContent =
+      "🔵 BLUE নির্বাচন করা হয়েছে";
+
   }
 
-  result.textContent =
-    color === "red"
-      ? "🔴 Red নির্বাচন করা হয়েছে"
-      : "🔵 Blue নির্বাচন করা হয়েছে";
 }
+
+
+/* =========================
+   SPIN
+========================= */
 
 function spin(){
 
   if(spinning) return;
 
   if(!selectedColor){
-    result.textContent = "⚠️ আগে Red অথবা Blue নির্বাচন করো";
+
+    resultEl.textContent =
+      "⚠️ আগে RED অথবা BLUE নির্বাচন করো";
+
     return;
   }
 
   const amount =
-    parseInt(document.getElementById("amount").value);
+    Number(
+      document.getElementById("amount").value
+    );
 
   if(!amount || amount <= 0){
-    result.textContent = "⚠️ সঠিক Demo Coin amount দাও";
+
+    resultEl.textContent =
+      "⚠️ সঠিক Demo Coin amount দাও";
+
     return;
   }
 
   if(amount > coins){
-    result.textContent = "❌ পর্যাপ্ত Demo Coin নেই";
+
+    resultEl.textContent =
+      "❌ পর্যাপ্ত Demo Coin নেই";
+
     return;
   }
+
+
+  /* Start */
 
   spinning = true;
   spinBtn.disabled = true;
@@ -304,69 +557,155 @@ function spin(){
   coins -= amount;
   updateCoins();
 
-  result.textContent = "🎡 চাকা ঘুরছে...";
+  resultEl.textContent =
+    "🎡 Wheel spinning...";
+
 
   /*
-    Fair random result:
-    0 = Red
-    1 = Blue
+    10 slots:
+
+    0 RED
+    1 BLUE
+    2 RED
+    3 BLUE
+    4 RED
+    5 BLUE
+    6 RED
+    7 BLUE
+    8 RED
+    9 BLUE
   */
+
+  const resultSlot =
+    Math.floor(Math.random() * 10);
+
   const resultColor =
-    Math.random() < 0.5 ? "red" : "blue";
+    resultSlot % 2 === 0
+      ? "red"
+      : "blue";
+
 
   /*
-    Red অংশ = 0-180°
-    Blue অংশ = 180-360°
+    Each slot = 36 degrees.
+
+    The pointer is at the top.
+    We calculate the exact center
+    of the selected slot.
   */
-  const extraSpins = 5 * 360;
 
-  let targetAngle;
+  const slotCenter =
+    resultSlot * 36 + 18;
 
-  if(resultColor === "red"){
-    targetAngle = Math.floor(Math.random() * 170) + 5;
-  }else{
-    targetAngle = Math.floor(Math.random() * 170) + 185;
-  }
+  const target =
+    360 - slotCenter;
 
-  rotation += extraSpins + targetAngle;
+
+  /*
+    Extra full rotations make
+    the animation smooth.
+  */
+
+  const fullSpins = 6 * 360;
+
+  rotation += fullSpins + target;
 
   wheel.style.transform =
     `rotate(${rotation}deg)`;
 
+
+  /* Sound */
+
+  spinSound();
+
+
+  /*
+    Wait until CSS animation finishes.
+  */
+
   setTimeout(() => {
 
-    if(resultColor === selectedColor){
+    const won =
+      resultColor === selectedColor;
 
-      const winAmount = amount * 2;
 
-      coins += winAmount;
+    if(won){
 
-      result.innerHTML =
-        `🎉 জিতেছো! ${resultColor === "red" ? "🔴 RED" : "🔵 BLUE"} এসেছে<br>
-         +${winAmount} Demo Coins`;
+      const reward = amount * 2;
+
+      coins += reward;
+
+      resultEl.innerHTML =
+        `🎉 ${resultColor === "red"
+          ? "🔴 RED"
+          : "🔵 BLUE"} এসেছে!<br>
+         তুমি জিতেছো +${reward} Demo Coins`;
 
     }else{
 
-      result.innerHTML =
-        `😔 ফলাফল: ${
-          resultColor === "red"
+      resultEl.innerHTML =
+        `😔 ${resultColor === "red"
           ? "🔴 RED"
-          : "🔵 BLUE"
-        }<br>
-        Demo Coin কাটা গেছে: ${amount}`;
+          : "🔵 BLUE"} এসেছে!<br>
+         -${amount} Demo Coins`;
 
     }
 
+
     updateCoins();
+
+    addHistory(resultColor);
+
+    resultSound(won);
 
     spinning = false;
     spinBtn.disabled = false;
 
-  },4000);
+  },4550);
+
 }
 
+
+/* =========================
+   BALANCE
+========================= */
+
 function updateCoins(){
-  coinsText.textContent = coins;
+
+  coinsEl.textContent =
+    coins.toLocaleString();
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function addHistory(color){
+
+  const item =
+    document.createElement("span");
+
+  item.textContent =
+    color === "red" ? "R" : "B";
+
+  item.style.background =
+    color === "red"
+      ? "#e63946"
+      : "#1769e0";
+
+  historyEl.prepend(item);
+
+  /* Keep last 10 results */
+
+  while(historyEl.children.length > 10){
+
+    historyEl.removeChild(
+      historyEl.lastChild
+    );
+
+  }
+
 }
 
 </script>
