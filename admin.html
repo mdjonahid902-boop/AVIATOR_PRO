@@ -1,33 +1,481 @@
-GAMING ZONE
-ADMIN CONTROL CENTER
-📊 Overview
-👥 Users
-💳 Requests
-🎮 Games & Config
-📢 Announcement
-🛡️ Audit Log
-Games
-mdjonaeid902@gmail.com
-● ADMIN SESSION
-🥊 বক্সিং কিং কন্ট্রোল
-(Settings)
-এই কন্ট্রোলগুলো সরাসরি config/boxingKing-এ সেভ হবে। Win-rate/RTP দিয়ে খেলোয়াড়ের ফলাফল গোপনে নিয়ন্ত্রণ করার অপশন রাখা হয়নি।
-গেম চালু/বন্ধ (Enable/Disable)
-বন্ধ করলে Boxing King-এর spin শুরু করা যাবে না।
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gaming Zone - Admin Panel</title>
 
-বেট অপশনসমূহ (কোমা দিয়ে লিখুন)
-0.5, 1, 2, 3, 5, 10
-RTP / Reference Factor (transparent setting)
-এটি configuration/reference value হিসেবে সেভ হবে; এটি player-এর win/lose outcome গোপনে নিয়ন্ত্রণ করে না।
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-0.4x
-👤 User-specific RTP / Reference Factor
-একজন নির্দিষ্ট ইউজারের জন্য আলাদা transparent payout/reference factor সংরক্ষণ করা যাবে। এটি win/lose outcome জোর করে নির্ধারণ করার কন্ট্রোল নয়।
-User / UID
+    <style>
+        :root {
+            --bg-color: #090b10;
+            --card-bg: rgba(18, 22, 33, 0.9);
+            --accent: #ffcc00;
+            --accent-orange: #ff6600;
+            --border: rgba(255, 204, 0, 0.2);
+            --text: #ffffff;
+            --text-dim: #a0aec0;
+        }
 
-একজন ইউজার নির্বাচন করুন…
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-1.0x
-Save for User
-Clear
-বক্সিং কিং সেটিংস সেভ করুন
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-header h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #ffcc00, #ff6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .admin-header p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .admin-card h2 {
+            font-size: 0.95rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .form-row span {
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Switch Toggle CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .3s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #43a047; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .btn-save {
+            width: 100%;
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(67, 160, 71, 0.4);
+            margin-top: 5px;
+        }
+
+        .btn-save:active { transform: scale(0.98); }
+        .success-msg { font-size: 0.72rem; color: #81c784; text-align: center; margin-top: 6px; }
+
+        /* ডিপোজিট ও উইথড্র রিকোয়েস্ট কার্ড স্টাইল */
+        .request-item {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.8rem;
+        }
+        .request-item p { margin-bottom: 4px; }
+        .btn-group { display: flex; gap: 6px; margin-top: 8px; }
+        .btn-approve { background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .btn-reject { background: #da3633; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .empty-msg { color: var(--text-dim); font-size: 0.75rem; font-style: italic; text-align: center; padding: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>👑 Gaming Zone Admin</h1>
+            <p>রিয়েল-টাইম গেম কন্ট্রোল ও ম্যানেজমেন্ট প্যানেল</p>
+        </header>
+
+        <!-- Global Settings Card -->
+        <div class="admin-card">
+            <h2>📢 গ্লোবাল সেটিংস (ঘোষণা ও নম্বর)</h2>
+            <div class="form-group">
+                <label>ওয়েবসাইট ঘোষণা (Announcement)</label>
+                <input type="text" id="admin-announcement" placeholder="যেমন: আজ ডিপোজিট করলে ১০% বোনাস!">
+            </div>
+            <div class="form-group">
+                <label>এজেন্ট/পেমেন্ট নম্বর (বিকাশ/নগদ)</label>
+                <input type="text" id="admin-payment-number" placeholder="01700000000">
+            </div>
+            <button class="btn-save" onclick="saveGlobalSettings()">গ্লোবাল আপডেট সেভ করুন</button>
+            <div class="success-msg" id="global-msg"></div>
+        </div>
+
+        <!-- Boxing King Controls Card -->
+        <div class="admin-card">
+            <h2>🥊 বক্সিং কিং কন্ট্রোল (Win Rate & Settings)</h2>
+            
+            <div class="form-row">
+                <span>গেম চালু/বন্ধ (Enable/Disable)</span>
+                <label class="switch">
+                    <input type="checkbox" id="bk-enabled-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-row">
+                <span>টেস্ট মোড (Test Mode - ফ্রি কয়েন)</span>
+                <label class="switch">
+                    <input type="checkbox" id="bk-testmode-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>গ্লোবাল উইন রেট বা RTP ফ্যাক্টর (সকল ইউজারের জন্য)</label>
+                <select id="bk-rtp-factor">
+                    <option value="0.4">খুব কঠিন (Low Win Rate - 0.4x)</option>
+                    <option value="0.7">মাঝারি কঠিন (0.7x)</option>
+                    <option value="1.0">স্বাভাবিক (Normal RTP - 1.0x)</option>
+                    <option value="1.5">সহজ (High Win Rate - 1.5x)</option>
+                    <option value="2.0">অতিরিক্ত সহজ (Super Easy - 2.0x)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>বেট অপশনসমূহ (কমা দিয়ে লিখুন)</label>
+                <input type="text" id="bk-bet-options" placeholder="1.00, 2.00, 3.00, 5.00, 10.00">
+            </div>
+
+            <button class="btn-save" onclick="saveBoxingKingSettings()">বক্সিং কিং সেটিংস সেভ করুন</button>
+            <div class="success-msg" id="bk-msg"></div>
+
+            <hr style="border: 0; border-top: 1px dashed var(--border); margin: 15px 0;">
+
+            <!-- Specific User RTP Section -->
+            <h2>👤 আলাদা ইউজার RTP ফ্যাক্টর সেট করুন</h2>
+            <div class="form-group">
+                <label>ইউজার আইডি (User UID)</label>
+                <input type="text" id="user-rtp-uid" placeholder="ইউজারের UID লিখুন">
+            </div>
+            <div class="form-group">
+                <label>আলাদা RTP ফ্যাক্টর</label>
+                <select id="user-rtp-factor">
+                    <option value="0.2">অত্যন্ত কঠিন (0.2x)</option>
+                    <option value="0.4">খুব কঠিন (0.4x)</option>
+                    <option value="0.7">মাঝারি কঠিন (0.7x)</option>
+                    <option value="1.0">স্বাভাবিক (1.0x)</option>
+                    <option value="1.5">সহজ (1.5x)</option>
+                    <option value="2.0">অতিরিক্ত সহজ (2.0x)</option>
+                    <option value="3.0">জয়ের সম্ভাবনা সর্বোচ্চ (3.0x)</option>
+                </select>
+            </div>
+            <button class="btn-save" style="background: linear-gradient(135deg, #ff9800, #e65100);" onclick="saveUserRtp()">ইউজার RTP সেভ করুন</button>
+            <div class="success-msg" id="user-rtp-msg"></div>
+        </div>
+
+        <!-- পেন্ডিং ডিপোজিট রিকোয়েস্ট সেকশন -->
+        <div class="admin-card">
+            <h2>📥 পেন্ডিং ডিপোজিট রিকোয়েস্ট</h2>
+            <div id="admin-deposits-list">
+                <p class="empty-msg">লোড হচ্ছে...</p>
+            </div>
+        </div>
+
+        <!-- পেন্ডিং উইথড্র রিকোয়েস্ট সেকশন -->
+        <div class="admin-card" style="border-color: rgba(255, 102, 0, 0.3);">
+            <h2 style="color: var(--accent-orange);">📤 পেন্ডিং উইথড্র রিকোয়েস্ট</h2>
+            <div id="admin-withdrawals-list">
+                <p class="empty-msg">লোড হচ্ছে...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyTOnCm5IuPcB-yvGjFl3KbwRVxNrcNSY",
+            authDomain: "ff-to-gaming-4ea1b.firebaseapp.com",
+            databaseURL: "https://ff-to-gaming-4ea1b-default-rtdb.firebaseio.com",
+            projectId: "ff-to-gaming-4ea1b",
+            storageBucket: "ff-to-gaming-4ea1b.appspot.com",
+            messagingSenderId: "816776130875",
+            appId: "1:816776130875:web:c3e7984e0de53cbd89871e"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Load Global Settings
+            db.ref('adminSettings').once('value').then(snapshot => {
+                const data = snapshot.val() || {};
+                if(data.announcement) document.getElementById('admin-announcement').value = data.announcement;
+                if(data.paymentNumber) document.getElementById('admin-payment-number').value = data.paymentNumber;
+            });
+
+            // Load Boxing King Config
+            db.ref('config/boxingKing').once('value').then(snapshot => {
+                const cfg = snapshot.val() || {};
+                document.getElementById('bk-enabled-toggle').checked = cfg.enabled !== false;
+                document.getElementById('bk-testmode-toggle').checked = cfg.testMode === true;
+                if(cfg.rtpFactor) document.getElementById('bk-rtp-factor').value = cfg.rtpFactor;
+                if(cfg.betOptions) {
+                    document.getElementById('bk-bet-options').value = Array.isArray(cfg.betOptions) ? cfg.betOptions.join(', ') : cfg.betOptions;
+                }
+            });
+
+            loadAdminDeposits();
+            loadAdminWithdrawals();
+        });
+
+        // Save Global Settings
+        function saveGlobalSettings() {
+            const announcement = document.getElementById('admin-announcement').value;
+            const paymentNumber = document.getElementById('admin-payment-number').value;
+
+            db.ref('adminSettings').update({
+                announcement: announcement,
+                paymentNumber: paymentNumber
+            }, (error) => {
+                const msgEl = document.getElementById('global-msg');
+                if (!error) {
+                    msgEl.innerText = "সফলভাবে গ্লোবাল সেটিংস আপডেট হয়েছে! ✅";
+                    setTimeout(() => msgEl.innerText = "", 2500);
+                } else {
+                    msgEl.style.color = "#ef9a9a";
+                    msgEl.innerText = "ত্রুটি ঘটেছে!";
+                }
+            });
+        }
+
+        // Save Boxing King Settings
+        function saveBoxingKingSettings() {
+            const enabled = document.getElementById('bk-enabled-toggle').checked;
+            const testMode = document.getElementById('bk-testmode-toggle').checked;
+            const rtpFactor = parseFloat(document.getElementById('bk-rtp-factor').value);
+            const betOptionsStr = document.getElementById('bk-bet-options').value;
+
+            const betOptions = betOptionsStr.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+
+            db.ref('config/boxingKing').update({
+                enabled: enabled,
+                testMode: testMode,
+                rtpFactor: rtpFactor,
+                betOptions: betOptions.length > 0 ? betOptions : [1.00, 2.00, 3.00, 5.00, 10.00],
+                minBet: 1,
+                maxBet: 10,
+                animationSpeedMs: 90
+            }, (error) => {
+                const msgEl = document.getElementById('bk-msg');
+                if (!error) {
+                    msgEl.innerText = "বক্সিং কিং সেটিংস সফলভাবে আপডেট হয়েছে! 🔥";
+                    setTimeout(() => msgEl.innerText = "", 2500);
+                } else {
+                    msgEl.style.color = "#ef9a9a";
+                    msgEl.innerText = "ত্রুটি ঘটেছে!";
+                }
+            });
+        }
+
+        // Save Specific User RTP Settings
+        function saveUserRtp() {
+            const uid = document.getElementById('user-rtp-uid').value.trim();
+            const rtpFactor = parseFloat(document.getElementById('user-rtp-factor').value);
+            const msgEl = document.getElementById('user-rtp-msg');
+
+            if (!uid) {
+                msgEl.style.color = "#ef9a9a";
+                msgEl.innerText = "অনুগ্রহ করে ইউজারের UID দিন!";
+                return;
+            }
+
+            db.ref(`users/${uid}/rtpFactor`).set(rtpFactor, (error) => {
+                if (!error) {
+                    msgEl.style.color = "#81c784";
+                    msgEl.innerText = `ইউজার (${uid}) এর RTP সফলভাবে ${rtpFactor}x করা হয়েছে! ✅`;
+                    setTimeout(() => msgEl.innerText = "", 3000);
+                } else {
+                    msgEl.style.color = "#ef9a9a";
+                    msgEl.innerText = "ত্রুটি ঘটেছে: " + error.message;
+                }
+            });
+        }
+
+        // --- ডিপোজিট রিকোয়েস্ট লোড করা (req.uid সহ) ---
+        function loadAdminDeposits() {
+            db.ref('adminRequests/deposits').orderByChild('status').equalTo('pending').on('value', snapshot => {
+                const container = document.getElementById('admin-deposits-list');
+                container.innerHTML = '';
+                const data = snapshot.val();
+                
+                if (!data) {
+                    container.innerHTML = '<p class="empty-msg">কোনো পেন্ডিং ডিপোজিট নেই।</p>';
+                    return;
+                }
+
+                Object.keys(data).forEach(id => {
+                    const req = data[id];
+                    const div = document.createElement('div');
+                    div.className = 'request-item';
+                    
+                    div.innerHTML = `
+                        <p><b>ইউজার:</b> <span style="color:#58a6ff;">${req.email || req.uid}</span></p>
+                        <p><b>মেথড:</b> ${req.method.toUpperCase()} | <b>পরিমাণ:</b> <span style="color:#3fb950;">${req.amount}</span></p>
+                        <p><b>TrxID:</b> <span style="color:#ffcc00;">${req.trxId}</span></p>
+                        <div class="btn-group">
+                            <button class="btn-approve" onclick="processDeposit('${id}', 'approved', '${req.uid}', ${req.amount})">Approve</button>
+                            <button class="btn-reject" onclick="processDeposit('${id}', 'rejected', '${req.uid}', ${req.amount})">Reject</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        // --- উইথড্র রিকোয়েস্ট লোড করা (req.uid সহ) ---
+        function loadAdminWithdrawals() {
+            db.ref('adminRequests/withdrawals').orderByChild('status').equalTo('pending').on('value', snapshot => {
+                const container = document.getElementById('admin-withdrawals-list');
+                container.innerHTML = '';
+                const data = snapshot.val();
+                
+                if (!data) {
+                    container.innerHTML = '<p class="empty-msg">কোনো পেন্ডিং উইথড্র নেই।</p>';
+                    return;
+                }
+
+                Object.keys(data).forEach(id => {
+                    const req = data[id];
+                    const div = document.createElement('div');
+                    div.className = 'request-item';
+                    div.style.borderLeftColor = '#ff6600';
+                    
+                    div.innerHTML = `
+                        <p><b>ইউজার:</b> <span style="color:#58a6ff;">${req.email || req.uid}</span></p>
+                        <p><b>মেথড:</b> ${req.method.toUpperCase()} | <b>পরিমাণ:</b> <span style="color:#ff6600;">${req.amount}</span></p>
+                        <p><b>একাউন্ট নম্বর:</b> <span style="color:#ffcc00;">${req.accountNo}</span></p>
+                        <div class="btn-group">
+                            <button class="btn-approve" onclick="processWithdrawal('${id}', 'approved', '${req.uid}', ${req.amount})">Approve</button>
+                            <button class="btn-reject" onclick="processWithdrawal('${id}', 'rejected', '${req.uid}', ${req.amount})">Reject</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        // --- ডিপোজিট প্রসেস (অ্যাপ্রুভ করলে ইউজারের ব্যালেন্স যোগ হবে) ---
+        function processDeposit(requestId, status, uid, amount) {
+            if (!confirm(`আপনি কি ডিপোজিট রিকোয়েস্টটি ${status === 'approved' ? 'অ্যাপ্রুভ' : 'রিজেক্ট'} করতে চান?`)) return;
+
+            db.ref(`adminRequests/deposits/${requestId}`).update({ status: status }).then(() => {
+                if (status === 'approved' && uid) {
+                    const userRef = db.ref(`users/${uid}/balance`);
+                    userRef.transaction(currentBalance => (currentBalance || 0) + amount);
+                }
+                alert('সফলভাবে আপডেট করা হয়েছে!');
+            }).catch(error => alert('ত্রুটি: ' + error.message));
+        }
+
+        // --- উইথড্র প্রসেস (রিজেক্ট হলে ব্যালেন্স ফেরত দেওয়া হবে) ---
+        function processWithdrawal(requestId, status, uid, amount) {
+            if (!confirm(`আপনি কি উইথড্র রিকোয়েস্টটি ${status === 'approved' ? 'অ্যাপ্রুভ' : 'রিজেক্ট'} করতে চান?`)) return;
+
+            db.ref(`adminRequests/withdrawals/${requestId}`).update({ status: status }).then(() => {
+                if (status === 'rejected' && uid) {
+                    const userRef = db.ref(`users/${uid}/balance`);
+                    userRef.transaction(currentBalance => (currentBalance || 0) + amount);
+                }
+                alert('সফলভাবে আপডেট করা হয়েছে!');
+            }).catch(error => alert('ত্রুটি: ' + error.message));
+        }
+    </script>
+</body>
+</html>
