@@ -1,6 +1,33 @@
-<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game Admin Demo</title><style>*{box-sizing:border-box}body{margin:0;background:#080b12;color:#fff;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:24px}h1{color:#ff8a00}.panel{background:#111722;border:1px solid #2b3442;border-radius:18px;padding:20px;margin:16px 0}label{display:block;margin:14px 0 7px;font-weight:800}input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #374253;background:#090d14;color:#fff}textarea{min-height:260px;font-family:monospace}button{padding:12px 18px;border:0;border-radius:10px;background:#ff5b35;color:#fff;font-weight:900;cursor:pointer;margin-top:12px}.secondary{background:#273243}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.game{padding:12px;border:1px solid #303a49;border-radius:12px;margin:10px 0;background:#0b1018}small{color:#a8b2c0}.warn{padding:12px;border-radius:10px;background:#2a2110;color:#ffd27b}</style></head><body><div class="wrap"><h1>⚙️ Game Admin — Demo</h1><div class="warn">Demo version: HTML code Realtime Database-এ রাখা হচ্ছে। Production-এ Firebase Authentication ও কঠোর Security Rules অবশ্যই লাগবে।</div><div class="panel"><h2>➕ Add / Update Game</h2><label>Game ID</label><input id="id" placeholder="ludo"><label>Game Name</label><input id="name" placeholder="Ludo"><label>Thumbnail URL (optional)</label><input id="image" placeholder="https://..."><label>Emoji (image না দিলে)</label><input id="icon" value="🎲"><label>Game HTML</label><textarea id="html" placeholder="<!doctype html> ..."></textarea><div class="row"><button onclick="saveGame()">Publish Game</button><button class="secondary" onclick="clearForm()">Clear</button></div><p id="msg"></p></div><div class="panel"><h2>🎮 Published Games</h2><div id="list">লোড হচ্ছে...</div></div></div><script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';import{getDatabase,ref,set,remove,onValue,get}from'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-const firebaseConfig={apiKey:'AIzaSyAyTOnCm5IuPcB-yvGjFl3KbwRVxNrcNSY',authDomain:'ff-to-gaming-4ea1b.firebaseapp.com',databaseURL:'https://ff-to-gaming-4ea1b-default-rtdb.firebaseio.com',projectId:'ff-to-gaming-4ea1b',storageBucket:'ff-to-gaming-4ea1b.appspot.com',messagingSenderId:'816776130875',appId:'1:816776130875:web:ffc53da579b5142e89871e',measurementId:'G-3QVZW97NSR'};const db=getDatabase(initializeApp(firebaseConfig));const $=id=>document.getElementById(id);
-onValue(ref(db,'games'),s=>{const d=s.val()||{};$('list').innerHTML=Object.entries(d).map(([id,g])=>`<div class="game"><b>${esc(g.name||id)}</b> — <small>${g.enabled===false?'OFF':'ON'}</small><div class="row"><button onclick="loadGame('${id}')">Edit</button><button class="secondary" onclick="toggleGame('${id}',${g.enabled!==false})">${g.enabled===false?'Turn ON':'Turn OFF'}</button><button class="secondary" onclick="deleteGame('${id}')">Delete</button></div></div>`).join('')||'কোনো game নেই।'});
-window.saveGame=async()=>{const id=$('id').value.trim().replace(/[^a-zA-Z0-9_-]/g,'');const name=$('name').value.trim(),html=$('html').value;if(!id||!name||!html)return $('msg').textContent='ID, Name এবং HTML দিন।';if(html.length>500000)return $('msg').textContent='Demo limit: HTML 500KB-এর মধ্যে রাখুন।';await set(ref(db,'games/'+id),{name,image:$('image').value.trim(),icon:$('icon').value.trim(),enabled:true,html,updatedAt:Date.now()});$('msg').textContent='Published: '+id;clearForm()};window.loadGame=async id=>{const s=await get(ref(db,'games/'+id));const g=s.val();if(!g)return;$('id').value=id;$('name').value=g.name||'';$('image').value=g.image||'';$('icon').value=g.icon||'🎮';$('html').value=g.html||'';scrollTo({top:0,behavior:'smooth'})};window.toggleGame=async(id,current)=>set(ref(db,'games/'+id+'/enabled'),!current);window.deleteGame=async id=>{if(confirm('Delete '+id+'?'))await remove(ref(db,'games/'+id))};window.clearForm=()=>['id','name','image','html'].forEach(x=>$(x).value='');function esc(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-</script></body></html>
+GAMING ZONE
+ADMIN CONTROL CENTER
+📊 Overview
+👥 Users
+💳 Requests
+🎮 Games & Config
+📢 Announcement
+🛡️ Audit Log
+Games
+mdjonaeid902@gmail.com
+● ADMIN SESSION
+🥊 বক্সিং কিং কন্ট্রোল
+(Settings)
+এই কন্ট্রোলগুলো সরাসরি config/boxingKing-এ সেভ হবে। Win-rate/RTP দিয়ে খেলোয়াড়ের ফলাফল গোপনে নিয়ন্ত্রণ করার অপশন রাখা হয়নি।
+গেম চালু/বন্ধ (Enable/Disable)
+বন্ধ করলে Boxing King-এর spin শুরু করা যাবে না।
+
+বেট অপশনসমূহ (কোমা দিয়ে লিখুন)
+0.5, 1, 2, 3, 5, 10
+RTP / Reference Factor (transparent setting)
+এটি configuration/reference value হিসেবে সেভ হবে; এটি player-এর win/lose outcome গোপনে নিয়ন্ত্রণ করে না।
+
+0.4x
+👤 User-specific RTP / Reference Factor
+একজন নির্দিষ্ট ইউজারের জন্য আলাদা transparent payout/reference factor সংরক্ষণ করা যাবে। এটি win/lose outcome জোর করে নির্ধারণ করার কন্ট্রোল নয়।
+User / UID
+
+একজন ইউজার নির্বাচন করুন…
+
+1.0x
+Save for User
+Clear
+বক্সিং কিং সেটিংস সেভ করুন
