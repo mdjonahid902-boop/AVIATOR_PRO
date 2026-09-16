@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Gaming Zone - Professional Game Lobby</title>
-​<!-- Firebase SDKs -->
+<!-- Firebase SDKs -->
 <script src="[https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js](https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js)"></script>
 <script src="[https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js](https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js)"></script>
 <script src="[https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js](https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js)"></script>
-​<style>
+<style>
 :root {
 --lobby-bg: #090b10;
 --lobby-card-bg: rgba(18, 22, 33, 0.85);
@@ -18,14 +18,14 @@
 --lobby-text: #ffffff;
 --lobby-text-dim: #a0aec0;
 }
-​* {
+* {
 box-sizing: border-box;
 margin: 0;
 padding: 0;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 -webkit-tap-highlight-color: transparent;
 }
-​html, body {
+html, body {
 width: 100vw;
 height: 100vh;
 overflow-x: hidden;
@@ -33,7 +33,7 @@ background-color: var(--lobby-bg);
 color: var(--lobby-text);
 user-select: none;
 }
-​.page-screen {
+.page-screen {
 display: none;
 width: 100vw;
 min-height: 100vh;
@@ -42,11 +42,11 @@ top: 0;
 left: 0;
 z-index: 1;
 }
-​.page-screen.active {
+.page-screen.active {
 display: flex;
 flex-direction: column;
 }
-​.lobby-header {
+.lobby-header {
 background: rgba(15, 18, 28, 0.95);
 border-bottom: 1px solid var(--lobby-glass-border);
 padding: 12px 16px;
@@ -59,12 +59,12 @@ z-index: 10;
 backdrop-filter: blur(10px);
 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
-​.lobby-brand {
+.lobby-brand {
 display: flex;
 align-items: center;
 gap: 8px;
 }
-​.lobby-brand-title {
+.lobby-brand-title {
 font-size: 1.25rem;
 font-weight: 900;
 background: linear-gradient(135deg, #ffcc00, #ff6600);
@@ -73,12 +73,12 @@ background: linear-gradient(135deg, #ffcc00, #ff6600);
 text-transform: uppercase;
 letter-spacing: 1px;
 }
-​.lobby-brand-subtitle {
+.lobby-brand-subtitle {
 font-size: 0.65rem;
 color: var(--lobby-text-dim);
 letter-spacing: 0.5px;
 }
-​.lobby-uid-box {
+.lobby-uid-box {
 margin-top: 5px;
 display: flex;
 align-items: center;
@@ -124,7 +124,7 @@ cursor: pointer;
 .lobby-uid-label { font-size: 0.52rem; }
 .lobby-uid-copy { font-size: 0.5rem; padding: 2px 4px; }
 }
-​.lobby-container {
+.lobby-container {
 flex: 1;
 max-width: 900px;
 margin: 0 auto;
@@ -132,13 +132,13 @@ width: 100%;
 padding: 16px;
 box-sizing: border-box;
 }
-​.category-bar {
+.category-bar {
 display: flex;
 align-items: center;
 gap: 8px;
 margin-bottom: 16px;
 }
-​.category-badge {
+.category-badge {
 background: linear-gradient(135deg, #ff6600, #e53935);
 color: #fff;
 padding: 4px 12px;
@@ -150,23 +150,23 @@ align-items: center;
 gap: 4px;
 box-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
 }
-​.games-grid {
+.games-grid {
 display: grid;
 grid-template-columns: repeat(3, 1fr);
 gap: 12px;
 }
-​@media (max-width: 480px) {
+@media (max-width: 480px) {
 .games-grid {
 grid-template-columns: repeat(3, 1fr);
 gap: 8px;
 }
 }
-​@media (max-width: 340px) {
+@media (max-width: 340px) {
 .games-grid {
 grid-template-columns: repeat(2, 1fr);
 }
 }
-​.game-card {
+.game-card {
 background: var(--lobby-card-bg);
 border: 1px solid var(--lobby-glass-border);
 border-radius: 18px;
@@ -181,11 +181,11 @@ overflow: hidden;
 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 backdrop-filter: blur(8px);
 }
-​.game-card:active {
+.game-card:active {
 transform: scale(0.94);
 box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
 }
-​.card-image-box {
+.card-image-box {
 width: 100%;
 aspect-ratio: 1 / 1;
 border-radius: 12px;
@@ -197,7 +197,7 @@ align-items: center;
 justify-content: center;
 border: 1px solid rgba(255, 255, 255, 0.05);
 }
-​.card-visual-svg {
+.card-visual-svg {
 width: 100%;
 height: 100%;
 display: flex;
@@ -206,7 +206,7 @@ align-items: center;
 justify-content: center;
 border-radius: 12px;
 }
-​.game-title {
+.game-title {
 margin-top: 8px;
 font-size: 0.78rem;
 font-weight: 800;
@@ -217,7 +217,7 @@ overflow: hidden;
 text-overflow: ellipsis;
 width: 100%;
 }
-​.provider-tag {
+.provider-tag {
 position: absolute;
 top: 4px;
 left: 4px;
@@ -230,7 +230,7 @@ border-radius: 6px;
 backdrop-filter: blur(4px);
 border: 0.5px solid rgba(255, 204, 0, 0.3);
 }
-​.back-to-lobby-btn {
+.back-to-lobby-btn {
 position: fixed;
 top: 10px;
 left: 10px;
@@ -257,10 +257,10 @@ overflow: hidden;
 outline: none;
 -webkit-tap-highlight-color: transparent;
 }
-​.back-to-lobby-btn:active {
+.back-to-lobby-btn:active {
 transform: scale(0.92);
 }
-​.global-announce-bar {
+.global-announce-bar {
 position: fixed;
 top: 0; left: 0; right: 0;
 z-index: 99998;
@@ -272,13 +272,13 @@ text-align: center;
 padding: 6px 40px 6px 10px;
 box-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
-​body.announce-visible .page-screen {
+body.announce-visible .page-screen {
 margin-top: 28px;
 }
 body.announce-visible .global-user-bar {
 top: 36px;
 }
-​.global-user-bar {
+.global-user-bar {
 position: fixed;
 top: 8px;
 right: 8px;
@@ -294,7 +294,7 @@ backdrop-filter: blur(10px);
 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 max-width: calc(100vw - 100px);
 }
-​.global-user-bar #user-email-display {
+.global-user-bar #user-email-display {
 font-size: 0.65rem;
 color: #a0aec0;
 max-width: 70px;
@@ -303,10 +303,10 @@ text-overflow: ellipsis;
 white-space: nowrap;
 display: none;
 }
-​@media (min-width: 420px) {
+@media (min-width: 420px) {
 .global-user-bar #user-email-display { display: inline; }
 }
-​/* AVIATOR STYLES */
+/* AVIATOR STYLES */
 :root {
 --bg-color: #0e121b;
 --card-bg: rgba(21, 28, 41, 0.95);
@@ -316,31 +316,31 @@ display: none;
 --text-dim: #78909c;
 --glass-border: rgba(255, 255, 255, 0.08);
 }
-​#aviator-game-screen {
+#aviator-game-screen {
 background-color: var(--bg-color);
 color: var(--text-color);
 padding: 8px;
 box-sizing: border-box;
 justify-content: space-between;
 }
-​.av-header {
+.av-header {
 background: var(--card-bg); border: 1px solid var(--glass-border);
 border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
 height: 46px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-top: 36px;
 }
-​.av-logo { font-size: 0.9rem; font-weight: 900; color: var(--accent-red); }
+.av-logo { font-size: 0.9rem; font-weight: 900; color: var(--accent-red); }
 .av-balance-box { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--accent-green-bright); border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; }
 .av-balance-amount { color: #81c784; font-weight: bold; }
-​.av-btn { background: #1e88e5; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.72rem; }
+.av-btn { background: #1e88e5; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.72rem; }
 .av-btn-deposit { background: var(--accent-green-bright); }
 .av-btn-withdraw { background: #fb8c00; }
 .av-btn-logout { background: #455a64; }
-​.av-container { display: flex; flex-direction: column; gap: 8px; flex: 1; margin-top: 8px; overflow: hidden; }
-​.av-glass-card {
+.av-container { display: flex; flex-direction: column; gap: 8px; flex: 1; margin-top: 8px; overflow: hidden; }
+.av-glass-card {
 background: var(--card-bg); border: 1px solid var(--glass-border);
 border-radius: 12px; padding: 8px; display: flex; flex-direction: column; height: 100%; overflow: hidden;
 }
-​.av-history-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 6px; scrollbar-width: none; flex-shrink: 0; height: 28px; }
+.av-history-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 6px; scrollbar-width: none; flex-shrink: 0; height: 28px; }
 .av-history-bar::-webkit-scrollbar { display: none; }
 .av-history-item {
 background: rgba(0, 0, 0, 0.5); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold;
@@ -349,42 +349,42 @@ white-space: nowrap; border: 1px solid rgba(255, 255, 255, 0.08); display: flex;
 .av-history-item.low { color: #00e5ff; }
 .av-history-item.mid { color: #c084fc; }
 .av-history-item.high { color: #ffd700; border-color: rgba(255,215,0,0.4); }
-​.av-game-display {
+.av-game-display {
 position: relative; height: 48%; width: 100%;
 background: radial-gradient(circle at bottom left, #121926 0%, #080b10 80%);
 border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-shrink: 0;
 }
-​#game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+#game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 .av-multiplier-text { font-size: 2.2rem; font-weight: 900; z-index: 2; text-shadow: 0 0 20px rgba(0, 0, 0, 0.9); text-align: center; }
 .av-multiplier-text.crashed { color: var(--accent-red); }
-​.av-cashout-banner {
+.av-cashout-banner {
 position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
 background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 4px 14px; border-radius: 20px;
 font-size: 0.75rem; font-weight: bold; z-index: 10; white-space: nowrap;
 }
-​.av-controls-panel { margin-top: 8px; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+.av-controls-panel { margin-top: 8px; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; }
 .av-input-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .av-input-group label { font-size: 0.68rem; color: var(--text-dim); }
 .av-input-group input { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--glass-border); color: white; padding: 8px; border-radius: 6px; font-size: 0.85rem; width: 100%; outline: none; }
-​.av-btn-action { height: 42px; font-size: 0.8rem; flex: 1.2; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 800; border-radius: 6px; text-transform: uppercase; }
+.av-btn-action { height: 42px; font-size: 0.8rem; flex: 1.2; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 800; border-radius: 6px; text-transform: uppercase; }
 .av-btn-bet { background: linear-gradient(180deg, #43a047, #2e7d32); color: white; }
 .av-btn-cashout { background: linear-gradient(180deg, #fdd835, #f57f17); color: #000; }
 .av-btn-waiting { background: #37474f; color: #90a4ae; cursor: not-allowed; }
-​.av-live-bets-container { margin-top: 8px; flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; overflow: hidden; }
+.av-live-bets-container { margin-top: 8px; flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; overflow: hidden; }
 .av-live-bets-header { background: rgba(255,255,255,0.03); padding: 6px 10px; font-size: 0.68rem; color: var(--text-dim); font-weight: bold; display: grid; grid-template-columns: 2fr 1fr 1fr; }
 .av-live-bets-list { flex: 1; overflow-y: auto; }
 .av-live-bet-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 6px 10px; font-size: 0.72rem; align-items: center; }
 .av-live-bet-row.cashed { background: rgba(67, 160, 71, 0.15); color: #81c784; }
 .av-live-bet-row.lost { background: rgba(229, 57, 53, 0.15); color: #ef9a9a; }
 .av-no-bet-text { text-align: center; padding: 12px; font-size: 0.72rem; color: var(--text-dim); }
-​.av-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 200000; }
+.av-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 200000; }
 .hidden { display: none !important; }
 .av-modal { width: 90%; max-width: 320px; }
 .av-modal h2 { margin-bottom: 10px; font-size: 0.95rem; }
 .av-modal .form-group { margin-bottom: 8px; }
 .av-modal .form-group input, .av-modal .form-group select { width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; border-radius: 6px; font-size: 0.85rem; outline: none; }
 .av-error-msg { color: var(--accent-red); font-size: 0.72rem; margin-top: 4px; text-align: center; }
-​/* BOXING KING STYLES */
+/* BOXING KING STYLES */
 #boxing-king-screen {
 background: linear-gradient(rgba(13, 1, 26, 0.85), rgba(13, 1, 26, 0.95)),
 url('https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop') no-repeat center center fixed;
@@ -394,7 +394,7 @@ align-items: center;
 padding: 10px;
 box-sizing: border-box;
 }
-​.bk-game-container {
+.bk-game-container {
 width: 100%;
 max-width: 430px;
 background: rgba(20, 5, 35, 0.85);
@@ -408,21 +408,21 @@ transition: all 0.3s ease;
 margin-top: 30px;
 box-sizing: border-box;
 }
-​.bk-game-header h1 {
+.bk-game-header h1 {
 font-size: 22px;
 color: #ffcc00;
 text-transform: uppercase;
 text-shadow: 0 0 8px #ff3300, 2px 2px 0px #000;
 margin: 0 0 2px 0;
 }
-​.bk-game-header span {
+.bk-game-header span {
 font-size: 9px;
 letter-spacing: 1px;
 color: #ff9900;
 display: block;
 margin-bottom: 5px;
 }
-​.bk-fullscreen-toggle-btn {
+.bk-fullscreen-toggle-btn {
 background: linear-gradient(135deg, #00ffff, #0088cc);
 color: black;
 border: 2px solid #fff;
@@ -435,13 +435,13 @@ margin-bottom: 8px;
 text-transform: uppercase;
 outline: none;
 }
-​.bk-multiplier-bar {
+.bk-multiplier-bar {
 display: flex;
 justify-content: center;
 gap: 8px;
 margin: 8px 0;
 }
-​.bk-mult-box {
+.bk-mult-box {
 background: #222;
 padding: 4px 12px;
 border-radius: 6px;
@@ -451,14 +451,14 @@ color: #666;
 border: 1px solid #333;
 transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-​.bk-mult-box.active {
+.bk-mult-box.active {
 background: linear-gradient(135deg, #ffcc00, #ff6600);
 color: black;
 border-color: #fff;
 box-shadow: 0 0 12px #ffcc00;
 transform: scale(1.1);
 }
-​.bk-reels-board {
+.bk-reels-board {
 display: grid;
 grid-template-columns: repeat(5, 1fr);
 gap: 5px;
@@ -469,7 +469,7 @@ border: 2px solid #2a1b40;
 margin-bottom: 8px;
 touch-action: manipulation;
 }
-​.bk-slot-cell {
+.bk-slot-cell {
 aspect-ratio: 1 / 1;
 font-size: 24px;
 display: flex;
@@ -482,16 +482,16 @@ box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
 transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
 will-change: transform, opacity;
 }
-​.bk-explode {
+.bk-explode {
 transform: scale(0) rotate(45deg);
 opacity: 0;
 background: radial-gradient(circle, #fff 0%, #ff0055 100%) !important;
 }
-​.bk-spinning {
+.bk-spinning {
 transform: scaleY(0.9);
 opacity: 0.7;
 }
-​.bk-status {
+.bk-status {
 margin: 6px 0;
 font-size: 13px;
 font-weight: bold;
@@ -501,7 +501,7 @@ white-space: nowrap;
 overflow: hidden;
 text-overflow: ellipsis;
 }
-​.bk-dashboard {
+.bk-dashboard {
 display: flex;
 justify-content: space-between;
 background: rgba(0, 0, 0, 0.8);
@@ -510,24 +510,24 @@ border-radius: 10px;
 margin-bottom: 10px;
 border: 1px solid rgba(255, 204, 0, 0.2);
 }
-​.bk-dash-box {
+.bk-dash-box {
 display: flex;
 flex-direction: column;
 }
-​.bk-dash-label {
+.bk-dash-label {
 font-size: 9px;
 color: #ffcc00;
 text-transform: uppercase;
 }
-​.bk-dash-value {
+.bk-dash-value {
 font-size: 14px;
 font-weight: bold;
 color: #fff;
 }
-​#bk-bal { color: #00ffcc; }
+#bk-bal { color: #00ffcc; }
 #bk-win-display { color: #ff3366; }
 #bk-bet-display { color: #ffcc00; }
-​.bk-controls-panel {
+.bk-controls-panel {
 display: flex;
 justify-content: space-between;
 align-items: center;
@@ -535,7 +535,7 @@ background: rgba(0,0,0,0.6);
 padding: 6px 12px;
 border-radius: 50px;
 }
-​.bk-bet-btn {
+.bk-bet-btn {
 width: 40px;
 height: 40px;
 border-radius: 50%;
@@ -550,18 +550,18 @@ align-items: center;
 justify-content: center;
 outline: none;
 }
-​.bk-bet-btn:disabled {
+.bk-bet-btn:disabled {
 border-color: #444;
 color: #444;
 cursor: not-allowed;
 opacity: 0.6;
 }
-​.bk-spin-btn-container {
+.bk-spin-btn-container {
 background: radial-gradient(circle, #5a4000 0%, transparent 70%);
 padding: 3px;
 border-radius: 50%;
 }
-​.bk-spin-btn {
+.bk-spin-btn {
 width: 65px;
 height: 65px;
 font-size: 14px;
@@ -575,7 +575,7 @@ text-transform: uppercase;
 outline: none;
 box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
-​.bk-spin-btn:disabled {
+.bk-spin-btn:disabled {
 background: linear-gradient(135deg, #555, #222);
 color: #666;
 border-color: #444;
@@ -583,7 +583,7 @@ cursor: not-allowed;
 box-shadow: none;
 filter: grayscale(80%);
 }
-​/* RED vs BLUE — added game styles only */
+/* RED vs BLUE — added game styles only */
 #redblue-game-screen{background:radial-gradient(circle at 50% 20%,#17213b 0,#090b10 55%);padding:10px;align-items:center;justify-content:center}
 .rb-container{width:100%;max-width:460px;background:#0f1420e8;border:1px solid #ffffff18;border-radius:24px;padding:14px;box-shadow:0 0 35px #000b;text-align:center;margin-top:20px}
 .rb-title{font-size:22px;font-weight:900;background:linear-gradient(90deg,#ff3b3b,#fff,#3388ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -597,7 +597,7 @@ filter: grayscale(80%);
 :root{--rb-red:#e53935;--rb-blue:#1976d2;--rb-black:#111827;--rb-white:#f8fafc}
 .rb-red{background:var(--rb-red);color:#fff}.rb-blue{background:var(--rb-blue);color:#fff}.rb-black{background:var(--rb-black);color:#fff}.rb-white{background:var(--rb-white);color:#111827;border-color:#64748b!important}.rb-row{display:flex;gap:8px}.rb-row input{flex:1;background:#0009;border:1px solid #ffffff18;color:#fff;border-radius:9px;padding:10px;outline:none}
 .rb-spin{width:100%;margin-top:9px;padding:13px;border:0;border-radius:12px;background:linear-gradient(135deg,#ffcc00,#ff6600);font-size:17px;font-weight:1000;color:#111}.rb-spin:disabled{filter:grayscale(1);opacity:.5}.rb-balance{margin:7px 0;color:#7ee7b2;font-weight:800}.rb-status{min-height:22px;margin:7px 0;font-size:.8rem;font-weight:800}.rb-live-countdown{margin:10px 0 8px;padding:9px 10px;border-radius:14px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.18));border:1px solid rgba(255,204,0,.2);box-shadow:inset 0 0 18px rgba(255,204,0,.05)}.rb-countdown-label{font-size:9px;letter-spacing:1.4px;color:#9aa9bd;font-weight:900}.rb-countdown{font-size:30px;line-height:34px;font-weight:1000;color:#ffcc00;text-shadow:0 0 14px rgba(255,204,0,.55);font-variant-numeric:tabular-nums}.rb-countdown.pulse{animation:rbPulse .8s ease-in-out infinite}.rb-round-status{font-size:10px;font-weight:900;color:#7ee7b2;letter-spacing:.8px}.rb-live-countdown.locked{border-color:rgba(255,80,80,.25)}.rb-live-countdown.locked .rb-countdown{color:#ff7272;text-shadow:0 0 14px rgba(255,70,70,.45)}@keyframes rbResultGlow{from{filter:brightness(1) drop-shadow(0 0 4px rgba(255,255,255,.15))}to{filter:brightness(1.35) drop-shadow(0 0 18px rgba(255,255,255,.9))}}@keyframes rbPulse{50%{transform:scale(1.08);opacity:.72}}.rb-note{font-size:9px;color:#7f8da3;margin-top:10px}.sound-btn{background:#374151;color:#fff;border:1px solid #ffffff22;padding:6px 10px;border-radius:20px;font-size:11px}
-​/* COLOR GEMS — Gaming Zone integrated slot game */
+/* COLOR GEMS — Gaming Zone integrated slot game */
 #color-gems-screen{background:radial-gradient(circle at 50% 10%,#243e87 0,#10152e 28%,#060812 72%);padding:8px;align-items:center;justify-content:center;overflow:auto}
 .cg-container{width:100%;max-width:430px;background:linear-gradient(#14203d,#080b16);border:2px solid #5975a8;border-radius:18px;padding:8px;box-shadow:0 0 30px #18366d,inset 0 0 22px #000}
 .cg-top{background:linear-gradient(180deg,#3969bd,#17316f 55%,#0d193a);border:2px solid #ffd84d;border-radius:11px;text-align:center;padding:3px 5px 6px;box-shadow:0 0 14px #247cff88,inset 0 0 8px #000}
@@ -607,16 +607,16 @@ filter: grayscale(80%);
 @media(max-width:360px){.cg-symbol{font-size:25px}.cg-spin{width:68px;height:68px;font-size:29px}.cg-controls{grid-template-columns:38px 45px 1fr 45px 38px}.cg-icon{width:38px}.cg-controls .cg-icon.cg-minus,.cg-controls .cg-icon.cg-plus{width:45px}}
 </style>
 </head>
-​<body>
-​<button class="back-to-lobby-btn hidden" id="global-back-btn" onclick="openLobby()">
+<body>
+<button class="back-to-lobby-btn hidden" id="global-back-btn" onclick="openLobby()">
 ◀ LOBBY
 </button>
-​<div class="global-announce-bar hidden" id="global-announce-bar"></div>
-​<div class="global-user-bar hidden" id="global-user-bar" style="display:none;">
+<div class="global-announce-bar hidden" id="global-announce-bar"></div>
+<div class="global-user-bar hidden" id="global-user-bar" style="display:none;">
 <span id="user-email-display"></span>
 <button class="av-btn av-btn-logout" id="logout-btn">Exit</button>
 </div>
-​<!-- AUTH MODAL -->
+<!-- AUTH MODAL -->
 <div class="av-modal-overlay hidden" id="auth-modal">
 <div class="av-glass-card av-modal">
 <h2 id="auth-title">GAMING ZONE LOGIN</h2>
@@ -631,7 +631,7 @@ filter: grayscale(80%);
 </form>
 </div>
 </div>
-​<!-- DEPOSIT MODAL -->
+<!-- DEPOSIT MODAL -->
 <div class="av-modal-overlay hidden" id="deposit-modal">
 <div class="av-glass-card av-modal">
 <h2>➕ কয়েন ডিপোজিট</h2>
@@ -659,7 +659,7 @@ filter: grayscale(80%);
 </div>
 </div>
 </div>
-​<!-- WITHDRAW MODAL -->
+<!-- WITHDRAW MODAL -->
 <div class="av-modal-overlay hidden" id="withdraw-modal">
 <div class="av-glass-card av-modal">
 <h2>📤 কয়েন উইথড্র</h2>
@@ -685,7 +685,7 @@ filter: grayscale(80%);
 </div>
 </div>
 </div>
-​<!-- PAGE 1: LOBBY -->
+<!-- PAGE 1: LOBBY -->
 <div class="page-screen active" id="lobby-screen">
 <header class="lobby-header">
 <div class="lobby-brand">
@@ -699,26 +699,26 @@ filter: grayscale(80%);
 </div>
 </div>
 </div>
-​<div style="display: flex; align-items: center; gap: 5px;">
+<div style="display: flex; align-items: center; gap: 5px;">
 <div class="av-balance-box" style="padding: 3px 6px; font-size: 0.7rem;">🪙 <span class="av-balance-amount" id="lobby-bal">0.00</span></div>
 <button class="av-btn av-btn-deposit" id="deposit-btn" style="padding: 4px 8px; font-size: 0.65rem;">➕ Deposit</button>
 <button class="av-btn av-btn-withdraw" id="withdraw-btn" style="padding: 4px 8px; font-size: 0.65rem;">📤 Withdraw</button>
 </div>
 </header>
-​<main class="lobby-container">
+<main class="lobby-container">
 <div class="category-bar">
 <div class="category-badge">🔥 HOT GAMES</div>
 </div>
-​<div class="games-grid" id="lobby-games-grid"></div>
+<div class="games-grid" id="lobby-games-grid"></div>
 </main>
 </div>
-​<!-- PAGE 2: AVIATOR PRO -->
+<!-- PAGE 2: AVIATOR PRO -->
 <div class="page-screen" id="aviator-game-screen">
 <header class="av-header">
 <div class="av-logo">✈️ AVIATOR PRO</div>
 <button class="av-btn" id="av-fs-btn" onclick="toggleAviatorFullScreen()" style="padding: 3px 10px; font-size: 0.65rem; background: #0088cc;">📱 ফুলস্ক্রিন</button>
 </header>
-​<div class="av-container">
+<div class="av-container">
 <div class="av-glass-card">
 <div class="av-history-bar" id="history-bar"></div>
 <div id="cashout-banner-container"></div>
@@ -733,7 +733,7 @@ filter: grayscale(80%);
 </div>
 <button class="av-btn av-btn-action av-btn-bet" id="bet-btn">পরবর্তী রাউন্ডে বেট দিন</button>
 </div>
-​<div class="av-live-bets-container">
+<div class="av-live-bets-container">
 <div class="av-live-bets-header">
 <span>User</span>
 <span>Coin Bet</span>
@@ -746,27 +746,27 @@ filter: grayscale(80%);
 </div>
 </div>
 </div>
-​<!-- PAGE 3: BOXING KING -->
+<!-- PAGE 3: BOXING KING -->
 <div class="page-screen" id="boxing-king-screen">
 <div class="bk-game-container" id="bkGameContainer">
 <div class="bk-game-header">
 <h1>Boxing King</h1>
 <span>LEFT TO RIGHT ONLY</span>
 </div>
-​<div>
+<div>
 <button class="bk-fullscreen-toggle-btn" id="bkFsBtn" onclick="toggleBkFullScreen()">
 📱 ফুলস্ক্রিন করুন
 </button>
 </div>
-​<div class="bk-multiplier-bar">
+<div class="bk-multiplier-bar">
 <div class="bk-mult-box active" id="bk-m1">1X</div>
 <div class="bk-mult-box" id="bk-m2">2X</div>
 <div class="bk-mult-box" id="bk-m3">3X</div>
 <div class="bk-mult-box" id="bk-m5">5X</div>
 </div>
-​<div class="bk-reels-board" id="bk-board"></div>
-​<div class="bk-status" id="bk-status">SPIN চাপুন! 🥊</div>
-​<div class="bk-dashboard">
+<div class="bk-reels-board" id="bk-board"></div>
+<div class="bk-status" id="bk-status">SPIN চাপুন! 🥊</div>
+<div class="bk-dashboard">
 <div class="bk-dash-box">
 <span class="bk-dash-label">Win (Coin)</span>
 <span id="bk-win-display" class="bk-dash-value">0.00</span>
@@ -780,7 +780,7 @@ filter: grayscale(80%);
 <span id="bk-bal" class="bk-dash-value">0.00</span>
 </div>
 </div>
-​<div class="bk-controls-panel">
+<div class="bk-controls-panel">
 <button class="bk-bet-btn" id="bk-bet-minus-btn" onclick="changeBkBet(-1)">-</button>
 <div class="bk-spin-btn-container">
 <button class="bk-spin-btn" onclick="handleBkSpinClick()" id="bk-spin-btn">SPIN</button>
@@ -789,7 +789,7 @@ filter: grayscale(80%);
 </div>
 </div>
 </div>
-​<!-- PAGE 4: COLOR GEMS -->
+<!-- PAGE 4: COLOR GEMS -->
 <div class="page-screen" id="color-gems-screen">
 <div class="cg-container" id="cgGameContainer">
 <button class="cg-fs" id="cg-fs-btn" onclick="toggleCgFullScreen()">📱 ফুলস্ক্রিন করুন</button>
@@ -802,7 +802,7 @@ filter: grayscale(80%);
 <div class="cg-note">Gaming Zone • Color Gems • Virtual/Demo Coins</div>
 </div>
 </div>
-​<!-- PAGE 4: RED vs BLUE -->
+<!-- PAGE 4: RED vs BLUE -->
 <div class="page-screen" id="redblue-game-screen">
 <div class="rb-container">
 <div class="rb-title">🔴 RED vs BLUE 🔵</div>
@@ -831,7 +831,7 @@ filter: grayscale(80%);
 <div class="rb-note">20-slot demo: 5 Red + 5 Blue + 5 Black + 5 White. Result is random and independent of the selected bet. Result is random and does not depend on the selected bet.</div>
 </div>
 </div>
-​<!-- JAVASCRIPT LOGIC -->
+<!-- JAVASCRIPT LOGIC -->
 <script>
 const GAME_CONFIGS = [
 {
@@ -867,31 +867,31 @@ svgBg: 'linear-gradient(135deg, #650b16, #102d67)',
 svgIcon: 🔴🔵
 }
 ];
-​function renderLobbyCards() {
+function renderLobbyCards() {
 const gridContainer = document.getElementById('lobby-games-grid');
 gridContainer.innerHTML = '';
-​GAME_CONFIGS.forEach(game => {
+GAME_CONFIGS.forEach(game => {
 const card = document.createElement('div');
 card.className = 'game-card';
 card.onclick = () => openGameScreen(game.screenId);
-​card.innerHTML = <div class="provider-tag">${game.provider}</div> <div class="card-image-box"> <div class="card-visual-svg" style="background: ${game.svgBg}; font-size: 42px;"> ${game.svgIcon} </div> </div> <div class="game-title">${game.name}</div>;
+card.innerHTML = <div class="provider-tag">${game.provider}</div> <div class="card-image-box"> <div class="card-visual-svg" style="background: ${game.svgBg}; font-size: 42px;"> ${game.svgIcon} </div> </div> <div class="game-title">${game.name}</div>;
 gridContainer.appendChild(card);
 });
 }
-​function openGameScreen(screenId) {
+function openGameScreen(screenId) {
 document.querySelectorAll('.page-screen').forEach(scr => scr.classList.remove('active'));
 document.getElementById(screenId).classList.add('active');
 document.getElementById('global-back-btn').classList.remove('hidden');
-​if (screenId === 'aviator-game-screen') {
+if (screenId === 'aviator-game-screen') {
 setTimeout(resizeCanvas, 150);
 }
 }
-​function openLobby() {
+function openLobby() {
 document.querySelectorAll('.page-screen').forEach(scr => scr.classList.remove('active'));
 document.getElementById('lobby-screen').classList.add('active');
 document.getElementById('global-back-btn').classList.add('hidden');
 }
-​const firebaseConfig = {
+const firebaseConfig = {
 apiKey: "AIzaSyAyTOnCm5IuPcB-yvGjFl3KbwRVxNrcNSY",
 authDomain: "ff-to-gaming-4ea1b.firebaseapp.com",
 databaseURL: "https://ff-to-gaming-4ea1b-default-rtdb.firebaseio.com",
@@ -900,19 +900,19 @@ storageBucket: "ff-to-gaming-4ea1b.appspot.com",
 messagingSenderId: "816776130875",
 appId: "1:816776130875:web:c3e7984e0de53cbd89871e"
 };
-​if (!firebase.apps.length) {
+if (!firebase.apps.length) {
 firebase.initializeApp(firebaseConfig);
 }
-​const auth = firebase.auth();
+const auth = firebase.auth();
 const db = firebase.database();
-​auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(err => console.log(err));
-​let currentUser = null;
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(err => console.log(err));
+let currentUser = null;
 let userDbRef = null;
 let currentBalance = 0;
 let isSignUp = false;
-​let currentLocalMult = 1.00;
+let currentLocalMult = 1.00;
 let lastCrashedDisplayValue = 1.00;
-​let activeBet = 0;
+let activeBet = 0;
 let betRoundIndex = -1;
 let hasCashedOut = false;
 let cashedMultiplier = 0;
@@ -920,14 +920,14 @@ let cashedAmount = 0;
 let lastProcessedRound = -1;
 let isProcessingBet = false;
 let historyArray = [];
-​const authModal = document.getElementById('auth-modal');
+const authModal = document.getElementById('auth-modal');
 const authError = document.getElementById('auth-error');
 const toggleAuthMode = document.getElementById('toggle-auth-mode');
 const authTitle = document.getElementById('auth-title');
 const authSubmitBtn = document.getElementById('auth-submit-btn');
-​const globalUserBar = document.getElementById('global-user-bar');
+const globalUserBar = document.getElementById('global-user-bar');
 const userEmailDisplay = document.getElementById('user-email-display');
-​const announceBar = document.getElementById('global-announce-bar');
+const announceBar = document.getElementById('global-announce-bar');
 db.ref('adminSettings/announcement').on('value', function(snapshot) {
 const text = snapshot.val();
 if (text && text.trim() !== "") {
@@ -939,13 +939,13 @@ announceBar.classList.add('hidden');
 document.body.classList.remove('announce-visible');
 }
 });
-​// LIVE Deposit payment numbers — kept compatible with the original User panel.
+// LIVE Deposit payment numbers — kept compatible with the original User panel.
 // Admin can control bKash and Nagad separately from Firebase.
 const depositPaymentNumbers = { bkash: '', nagad: '' };
 const depositMethodEl = document.getElementById('deposit-method');
 const depositPaymentLabelEl = document.getElementById('deposit-payment-label');
 const depositPaymentNumberEl = document.getElementById('admin-bkash-num');
-​function updateDepositPaymentUI() {
+function updateDepositPaymentUI() {
 const method = depositMethodEl ? depositMethodEl.value : 'bkash';
 const number = String(depositPaymentNumbers[method] || '').trim();
 if (depositPaymentLabelEl) {
@@ -956,15 +956,15 @@ depositPaymentNumberEl.innerText = number || 'নম্বর সেট কর�
 depositPaymentNumberEl.style.color = number ? '#ffcc00' : '#ef9a9a';
 }
 }
-​function watchDepositPaymentNumber(path, key) {
+function watchDepositPaymentNumber(path, key) {
 db.ref(path).on('value', function(snapshot) {
 depositPaymentNumbers[key] = String(snapshot.val() || '');
 updateDepositPaymentUI();
 });
 }
-​watchDepositPaymentNumber('adminSettings/paymentNumberBkash', 'bkash');
+watchDepositPaymentNumber('adminSettings/paymentNumberBkash', 'bkash');
 watchDepositPaymentNumber('adminSettings/paymentNumberNagad', 'nagad');
-​// Backward compatibility: if an older Admin still uses the single paymentNumber path,
+// Backward compatibility: if an older Admin still uses the single paymentNumber path,
 // use it as a fallback without changing the newer separate bKash/Nagad values.
 db.ref('adminSettings/paymentNumber').on('value', function(snapshot) {
 const legacy = String(snapshot.val() || '').trim();
@@ -972,31 +972,31 @@ if (!depositPaymentNumbers.bkash && legacy) depositPaymentNumbers.bkash = legacy
 if (!depositPaymentNumbers.nagad && legacy) depositPaymentNumbers.nagad = legacy;
 updateDepositPaymentUI();
 });
-​if (depositMethodEl) depositMethodEl.addEventListener('change', updateDepositPaymentUI);
-​const depositModal = document.getElementById('deposit-modal');
+if (depositMethodEl) depositMethodEl.addEventListener('change', updateDepositPaymentUI);
+const depositModal = document.getElementById('deposit-modal');
 const withdrawModal = document.getElementById('withdraw-modal');
 const depositMsg = document.getElementById('deposit-msg');
 const withdrawMsg = document.getElementById('withdraw-msg');
-​document.getElementById('deposit-btn').addEventListener('click', () => {
+document.getElementById('deposit-btn').addEventListener('click', () => {
 if (!currentUser) return alert("প্রথমে Login করুন!");
 depositMsg.innerText = "";
 document.getElementById('deposit-trxid').value = "";
 depositModal.classList.remove('hidden');
 });
 document.getElementById('close-deposit-btn').onclick = () => depositModal.classList.add('hidden');
-​// --- ডিপোজিট রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
+// --- ডিপোজিট রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
 document.getElementById('deposit-confirm-btn').addEventListener('click', () => {
 if (!currentUser) return;
 const amt = parseFloat(document.getElementById('deposit-amount').value);
 const method = document.getElementById('deposit-method').value;
 const trxId = document.getElementById('deposit-trxid').value.trim();
 const paymentNumber = (depositPaymentNumbers[method] || '').trim();
-​if (!paymentNumber) {
+if (!paymentNumber) {
 depositMsg.style.color = "#ef9a9a";
 depositMsg.innerText = method === 'nagad' ? "নগদ ডিপোজিট বর্তমানে বন্ধ আছে।" : "বিকাশ ডিপোজিট বর্তমানে বন্ধ আছে।";
 return;
 }
-​if (isNaN(amt) || amt <= 0) {
+if (isNaN(amt) || amt <= 0) {
 depositMsg.style.color = "#ef9a9a";
 depositMsg.innerText = "সঠিক পরিমাণ লিখুন।";
 return;
@@ -1006,7 +1006,7 @@ depositMsg.style.color = "#ef9a9a";
 depositMsg.innerText = "ট্রানজেকশন আইডি (TrxID) প্রদান করুন।";
 return;
 }
-​const depositData = {
+const depositData = {
 uid: currentUser.uid,
 email: currentUser.email,
 amount: amt,
@@ -1015,7 +1015,7 @@ trxId: trxId,
 status: 'pending',
 timestamp: Date.now()
 };
-​db.ref('adminRequests/deposits').push(depositData)
+db.ref('adminRequests/deposits').push(depositData)
 .then(() => {
 depositMsg.style.color = "#81c784";
 depositMsg.innerText = "ডিপোজিট রিকোয়েস্ট সফলভাবে জমা হয়েছে।";
@@ -1031,20 +1031,20 @@ depositMsg.style.color = "#ef9a9a";
 depositMsg.innerText = "ত্রুটি: " + error.message;
 });
 });
-​document.getElementById('withdraw-btn').addEventListener('click', () => {
+document.getElementById('withdraw-btn').addEventListener('click', () => {
 if (!currentUser) return alert("প্রথমে Login করুন!");
 withdrawMsg.innerText = "";
 document.getElementById('withdraw-account').value = "";
 withdrawModal.classList.remove('hidden');
 });
 document.getElementById('close-withdraw-btn').onclick = () => withdrawModal.classList.add('hidden');
-​// --- উইথড্র রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
+// --- উইথড্র রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
 document.getElementById('withdraw-confirm-btn').addEventListener('click', () => {
 if (!currentUser) return;
 const amt = parseFloat(document.getElementById('withdraw-amount').value);
 const method = document.getElementById('withdraw-method').value;
 const accountNo = document.getElementById('withdraw-account').value.trim();
-​if (isNaN(amt) || amt <= 0) {
+if (isNaN(amt) || amt <= 0) {
 withdrawMsg.style.color = "#ef9a9a";
 withdrawMsg.innerText = "সঠিক পরিমাণ লিখুন।";
 return;
@@ -1054,14 +1054,14 @@ withdrawMsg.style.color = "#ef9a9a";
 withdrawMsg.innerText = "একাউন্ট নম্বর প্রদান করুন।";
 return;
 }
-​db.ref('users/' + currentUser.uid + '/balance').once('value').then(snapshot => {
+db.ref('users/' + currentUser.uid + '/balance').once('value').then(snapshot => {
 const currentBalance = snapshot.val() || 0;
 if (currentBalance < amt) {
 withdrawMsg.style.color = "#ef9a9a";
 withdrawMsg.innerText = "পর্যাপ্ত ব্যালেন্স নেই।";
 return;
 }
-​const withdrawData = {
+const withdrawData = {
 uid: currentUser.uid,
 email: currentUser.email,
 amount: amt,
@@ -1070,7 +1070,7 @@ accountNo: accountNo,
 status: 'pending',
 timestamp: Date.now()
 };
-​db.ref('users/' + currentUser.uid + '/balance').set(currentBalance - amt)
+db.ref('users/' + currentUser.uid + '/balance').set(currentBalance - amt)
 .then(() => {
 return db.ref('adminRequests/withdrawals').push(withdrawData);
 })
@@ -1090,13 +1090,13 @@ withdrawMsg.innerText = "ত্রুটি: " + error.message;
 });
 });
 });
-​const betBtn = document.getElementById('bet-btn');
+const betBtn = document.getElementById('bet-btn');
 const betInput = document.getElementById('bet-amount');
 const multiplierDisplay = document.getElementById('multiplier-display');
 const cashoutBannerContainer = document.getElementById('cashout-banner-container');
 const historyBar = document.getElementById('history-bar');
 const liveBetsList = document.getElementById('live-bets-list');
-​let bkConfig = {
+let bkConfig = {
 enabled: true,
 minBet: 1,
 maxBet: 10,
@@ -1124,26 +1124,26 @@ cgConfig = bkConfig;
 applyBkConfigToUI();
 applyCgConfigToUI();
 });
-​function updateSharedBalanceUI() {
+function updateSharedBalanceUI() {
 const lobbyBalEl = document.getElementById('lobby-bal');
 if (lobbyBalEl) lobbyBalEl.innerText = currentBalance.toFixed(2);
-​const bkBalEl = document.getElementById('bk-bal');
+const bkBalEl = document.getElementById('bk-bal');
 if (bkBalEl) bkBalEl.innerText = bkFormatDecimal(currentBalance);
-​const rbBalEl = document.getElementById('rb-balance');
+const rbBalEl = document.getElementById('rb-balance');
 if (rbBalEl) rbBalEl.innerText = currentBalance.toFixed(2);
-​const cgBalEl = document.getElementById('cg-bal');
+const cgBalEl = document.getElementById('cg-bal');
 if (cgBalEl) cgBalEl.innerText = currentBalance.toFixed(2);
 }
-​const canvas = document.getElementById('game-canvas');
+const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
-​function resizeCanvas() {
+function resizeCanvas() {
 if (canvas && canvas.parentElement) {
 canvas.width = canvas.parentElement.clientWidth;
 canvas.height = canvas.parentElement.clientHeight;
 }
 }
 window.addEventListener('resize', resizeCanvas);
-​function toggleAviatorFullScreen() {
+function toggleAviatorFullScreen() {
 const container = document.getElementById("aviator-game-screen");
 const isFS = document.fullscreenElement || document.webkitFullscreenElement;
 if (!isFS) {
@@ -1154,7 +1154,7 @@ if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
 else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
 }
 }
-​toggleAuthMode.addEventListener('click', function(e) {
+toggleAuthMode.addEventListener('click', function(e) {
 e.preventDefault();
 isSignUp = !isSignUp;
 authTitle.innerText = isSignUp ? "CREATE ACCOUNT" : "GAMING ZONE LOGIN";
@@ -1162,15 +1162,15 @@ authSubmitBtn.innerText = isSignUp ? "Sign Up" : "Login";
 toggleAuthMode.innerText = isSignUp ? "Already have an account? Login" : "Create Account";
 authError.innerText = "";
 });
-​authSubmitBtn.addEventListener('click', function() {
+authSubmitBtn.addEventListener('click', function() {
 authError.innerText = "Processing...";
 const email = document.getElementById('auth-email').value.trim();
 const password = document.getElementById('auth-password').value.trim();
-​if (!email || !password) {
+if (!email || !password) {
 authError.innerText = "Please enter both Email and Password";
 return;
 }
-​if (isSignUp) {
+if (isSignUp) {
 auth.createUserWithEmailAndPassword(email, password)
 .then(cred => db.ref('users/' + cred.user.uid).set({
 email, balance: 000, games: 0, wins: 0,
@@ -1185,14 +1185,14 @@ auth.signInWithEmailAndPassword(email, password)
 .catch(err => { authError.innerText = err.message; });
 }
 });
-​document.getElementById('logout-btn').addEventListener('click', function() {
+document.getElementById('logout-btn').addEventListener('click', function() {
 auth.signOut().then(() => { window.location.reload(); });
 });
-​function updateLobbyUid(uid) {
+function updateLobbyUid(uid) {
 const el = document.getElementById('lobby-user-uid');
 if (el) el.textContent = uid || '—';
 }
-​async function copyLobbyUid() {
+async function copyLobbyUid() {
 const uid = currentUser && currentUser.uid ? currentUser.uid : '';
 if (!uid) {
 alert('প্রথমে Login করুন!');
@@ -1217,16 +1217,16 @@ btn.textContent = '✓ COPIED';
 setTimeout(() => { btn.textContent = old; }, 1400);
 }
 }
-​auth.onAuthStateChanged(function(user) {
+auth.onAuthStateChanged(function(user) {
 if (user) {
 currentUser = user;
 updateLobbyUid(user.uid);
 authModal.classList.add('hidden');
 globalUserBar.classList.remove('hidden');
 userEmailDisplay.innerText = user.email;
-​if (userDbRef) userDbRef.off();
+if (userDbRef) userDbRef.off();
 userDbRef = db.ref('users/' + user.uid);
-​userDbRef.on('value', function(snapshot) {
+userDbRef.on('value', function(snapshot) {
 const data = snapshot.val();
 if (data) {
 currentBalance = data.balance || 0;
@@ -1248,7 +1248,7 @@ currentBalance = 0;
 updateSharedBalanceUI();
 }
 });
-​function getDeterministicCrashPoint(roundIndex) {
+function getDeterministicCrashPoint(roundIndex) {
 let hash = Math.sin(roundIndex * 12.9898 + 78.233) * 43758.5453;
 let rand = hash - Math.floor(hash);
 let crash = 1.00;
@@ -1258,15 +1258,15 @@ else if (rand < 0.90) crash = 2.00 + ((rand - 0.65) / 0.25) * 3.00;
 else crash = 5.00 + ((rand - 0.90) / 0.10) * 20.00;
 return parseFloat(crash.toFixed(2));
 }
-​function calculateMultiplierFromTime(seconds) {
+function calculateMultiplierFromTime(seconds) {
 let mult = 1.00 + Math.pow(seconds, 1.25) * 0.12;
 return parseFloat(mult.toFixed(2));
 }
-​function calculateTimeFromMultiplier(mult) {
+function calculateTimeFromMultiplier(mult) {
 if (mult <= 1.00) return 0;
 return Math.pow((mult - 1.00) / 0.12, 1 / 1.25);
 }
-​function renderHistoryUI() {
+function renderHistoryUI() {
 historyBar.innerHTML = '';
 historyArray.forEach(val => {
 let badge = document.createElement('div');
@@ -1278,16 +1278,16 @@ badge.innerText = val.toFixed(2) + "x";
 historyBar.appendChild(badge);
 });
 }
-​function renderMyLiveBetUI(currentRoundIndex, isCrashed) {
+function renderMyLiveBetUI(currentRoundIndex, isCrashed) {
 const hasActiveBetThisRound = (betRoundIndex === currentRoundIndex);
 if (!hasActiveBetThisRound || !currentUser) {
 liveBetsList.innerHTML = '<div class="av-no-bet-text">কোনো লাইভ বেট নেই</div>';
 return;
 }
-​let nameDisplay = currentUser.email ? currentUser.email.split('@')[0] : 'You';
+let nameDisplay = currentUser.email ? currentUser.email.split('@')[0] : 'You';
 let statusText = "";
 let rowClass = "av-live-bet-row";
-​if (hasCashedOut) {
+if (hasCashedOut) {
 statusText = cashedMultiplier.toFixed(2) + "x (" + cashedAmount.toFixed(2) + " কয়েন)";
 rowClass += " cashed";
 } else if (isCrashed) {
@@ -1297,12 +1297,12 @@ rowClass += " lost";
 let liveWin = (activeBet * currentLocalMult).toFixed(2);
 statusText = "In Flight (" + liveWin + " কয়েন)";
 }
-​liveBetsList.innerHTML = <div class="${rowClass}"> <span>${nameDisplay} (You)</span> <span>${activeBet} কয়েন</span> <span>${statusText}</span> </div>;
+liveBetsList.innerHTML = <div class="${rowClass}"> <span>${nameDisplay} (You)</span> <span>${activeBet} কয়েন</span> <span>${statusText}</span> </div>;
 }
-​function drawAviatorFlight(mult, timeElapsed, totalDurationNeeded) {
+function drawAviatorFlight(mult, timeElapsed, totalDurationNeeded) {
 ctx.clearRect(0, 0, canvas.width, canvas.height);
 let isCrashed = (timeElapsed >= totalDurationNeeded);
-​let centerX = canvas.width / 2;
+let centerX = canvas.width / 2;
 let centerY = canvas.height / 2;
 ctx.save();
 ctx.fillStyle = "rgba(255, 255, 255, 0.022)";
@@ -1314,33 +1314,33 @@ ctx.closePath();
 ctx.fill();
 }
 ctx.restore();
-​let startX = canvas.width * 0.05;
+let startX = canvas.width * 0.05;
 let startY = canvas.height * 0.90;
-​let currentX = startX + (timeElapsed * (canvas.width * 0.18));
+let currentX = startX + (timeElapsed * (canvas.width * 0.18));
 let currentY = startY - (timeElapsed * (canvas.height * 0.15));
-​let overflowX = Math.max(0, currentX - (canvas.width * 0.75));
+let overflowX = Math.max(0, currentX - (canvas.width * 0.75));
 let overflowY = Math.max(0, (canvas.height * 0.20) - currentY);
-​currentX -= overflowX * 0.85;
+currentX -= overflowX * 0.85;
 currentY += overflowY * 0.85;
-​if (isCrashed) {
+if (isCrashed) {
 let crashTime = (timeElapsed - totalDurationNeeded);
 currentX += crashTime * canvas.width * 2.2;
 currentY -= crashTime * canvas.height * 1.5;
 }
-​let controlX = startX + (currentX - startX) * 0.4;
+let controlX = startX + (currentX - startX) * 0.4;
 let controlY = startY;
-​if (currentX <= canvas.width + 100 && currentY >= -100) {
+if (currentX <= canvas.width + 100 && currentY >= -100) {
 let fillGradient = ctx.createLinearGradient(0, startY, 0, Math.max(currentY, 0));
 fillGradient.addColorStop(0, 'rgba(229, 57, 53, 0.00)');
 fillGradient.addColorStop(1, 'rgba(229, 57, 53, 0.55)');
-​ctx.beginPath();
+ctx.beginPath();
 ctx.moveTo(startX, startY);
 ctx.quadraticCurveTo(controlX, controlY, currentX, currentY);
 ctx.lineTo(Math.min(currentX, canvas.width), startY);
 ctx.closePath();
 ctx.fillStyle = fillGradient;
 ctx.fill();
-​ctx.beginPath();
+ctx.beginPath();
 ctx.strokeStyle = '#e53935';
 ctx.lineWidth = 3.5;
 ctx.lineCap = 'round';
@@ -1348,33 +1348,33 @@ ctx.moveTo(startX, startY);
 ctx.quadraticCurveTo(controlX, controlY, currentX, currentY);
 ctx.stroke();
 }
-​if (currentX <= canvas.width + 80 && currentY >= -80) {
+if (currentX <= canvas.width + 80 && currentY >= -80) {
 ctx.save();
 ctx.translate(currentX, currentY);
 let tiltAngle = -Math.PI / 10 + (Math.sin(timeElapsed * 6) * 0.02);
 ctx.rotate(tiltAngle);
-​ctx.fillStyle = "#e53935";
+ctx.fillStyle = "#e53935";
 ctx.beginPath();
 ctx.moveTo(18, 0); ctx.lineTo(-18, -9); ctx.lineTo(-12, 0); ctx.lineTo(-18, 9);
 ctx.closePath(); ctx.fill();
-​ctx.fillStyle = "#b71c1c";
+ctx.fillStyle = "#b71c1c";
 ctx.beginPath();
 ctx.moveTo(-2, 0); ctx.lineTo(-10, -15); ctx.lineTo(-5, -15); ctx.lineTo(3, 0);
 ctx.closePath(); ctx.fill();
-​ctx.fillStyle = "#ffffff";
+ctx.fillStyle = "#ffffff";
 ctx.beginPath(); ctx.arc(4, -1, 3, 0, Math.PI * 2); ctx.fill();
 ctx.restore();
 }
 }
-​function masterGameLoop() {
+function masterGameLoop() {
 const CYCLE_DURATION = 18000;
 const WAIT_DURATION = 3000;
-​const now = Date.now();
+const now = Date.now();
 const currentRoundIndex = Math.floor(now / CYCLE_DURATION);
 const cycleElapsed = now % CYCLE_DURATION;
-​const targetCrashPoint = getDeterministicCrashPoint(currentRoundIndex);
+const targetCrashPoint = getDeterministicCrashPoint(currentRoundIndex);
 const totalFlightTimeNeeded = calculateTimeFromMultiplier(targetCrashPoint);
-​if (currentRoundIndex !== lastProcessedRound) {
+if (currentRoundIndex !== lastProcessedRound) {
 if (lastProcessedRound !== -1) {
 historyArray.unshift(lastCrashedDisplayValue);
 if (historyArray.length > 15) historyArray.pop();
@@ -1385,24 +1385,24 @@ historyArray.push(getDeterministicCrashPoint(currentRoundIndex - k));
 }
 renderHistoryUI();
 }
-​lastProcessedRound = currentRoundIndex;
+lastProcessedRound = currentRoundIndex;
 hasCashedOut = false;
 cashedMultiplier = 0;
 cashedAmount = 0;
 cashoutBannerContainer.innerHTML = '';
-​if (betRoundIndex < currentRoundIndex) {
+if (betRoundIndex < currentRoundIndex) {
 betRoundIndex = -1;
 activeBet = 0;
 }
 }
-​const isBetActiveForCurrentRound = (betRoundIndex === currentRoundIndex);
-​if (cycleElapsed < WAIT_DURATION) {
+const isBetActiveForCurrentRound = (betRoundIndex === currentRoundIndex);
+if (cycleElapsed < WAIT_DURATION) {
 let waitLeft = Math.ceil((WAIT_DURATION - cycleElapsed) / 1000);
 multiplierDisplay.innerText = "NEXT ROUND IN " + waitLeft + "s";
 multiplierDisplay.classList.remove('crashed');
 ctx.clearRect(0, 0, canvas.width, canvas.height);
-​renderMyLiveBetUI(currentRoundIndex, false);
-​if (isBetActiveForCurrentRound) {
+renderMyLiveBetUI(currentRoundIndex, false);
+if (isBetActiveForCurrentRound) {
 betBtn.innerText = "বেট প্লেসড";
 betBtn.className = "av-btn av-btn-action av-btn-waiting";
 betBtn.disabled = true;
@@ -1414,28 +1414,28 @@ betBtn.disabled = isProcessingBet;
 }
 else {
 let flyElapsed = (cycleElapsed - WAIT_DURATION) / 1000;
-​if (flyElapsed >= totalFlightTimeNeeded) {
+if (flyElapsed >= totalFlightTimeNeeded) {
 currentLocalMult = targetCrashPoint;
 lastCrashedDisplayValue = currentLocalMult;
-​multiplierDisplay.innerText = "FLEW AWAY!\n" + targetCrashPoint.toFixed(2) + "x";
+multiplierDisplay.innerText = "FLEW AWAY!\n" + targetCrashPoint.toFixed(2) + "x";
 multiplierDisplay.classList.add('crashed');
-​if (isBetActiveForCurrentRound && !hasCashedOut && currentUser) {
+if (isBetActiveForCurrentRound && !hasCashedOut && currentUser) {
 db.ref('users/' + currentUser.uid + '/games').transaction(g => (g || 0) + 1);
 }
-​renderMyLiveBetUI(currentRoundIndex, true);
+renderMyLiveBetUI(currentRoundIndex, true);
 drawAviatorFlight(targetCrashPoint, flyElapsed, totalFlightTimeNeeded);
-​betBtn.innerText = "অপেক্ষমাণ...";
+betBtn.innerText = "অপেক্ষমাণ...";
 betBtn.className = "av-btn av-btn-action av-btn-waiting";
 betBtn.disabled = true;
 }
 else {
 let calculatedMult = calculateMultiplierFromTime(flyElapsed);
 currentLocalMult = Math.min(calculatedMult, targetCrashPoint);
-​multiplierDisplay.innerText = currentLocalMult.toFixed(2) + "x";
+multiplierDisplay.innerText = currentLocalMult.toFixed(2) + "x";
 multiplierDisplay.classList.remove('crashed');
-​renderMyLiveBetUI(currentRoundIndex, false);
+renderMyLiveBetUI(currentRoundIndex, false);
 drawAviatorFlight(currentLocalMult, flyElapsed, totalFlightTimeNeeded);
-​if (isBetActiveForCurrentRound && !hasCashedOut) {
+if (isBetActiveForCurrentRound && !hasCashedOut) {
 const liveWin = (activeBet * currentLocalMult).toFixed(2);
 betBtn.innerText = "CASH OUT\n(" + liveWin + " কয়েন)";
 betBtn.className = "av-btn av-btn-action av-btn-cashout";
@@ -1451,31 +1451,31 @@ betBtn.disabled = false;
 }
 }
 }
-​requestAnimationFrame(masterGameLoop);
+requestAnimationFrame(masterGameLoop);
 }
-​betBtn.addEventListener('click', function() {
+betBtn.addEventListener('click', function() {
 if (!currentUser) return alert("প্রথমে Login করুন!");
-​const CYCLE_DURATION = 18000;
+const CYCLE_DURATION = 18000;
 const WAIT_DURATION = 3000;
 const now = Date.now();
 const cycleElapsed = now % CYCLE_DURATION;
 const currentRoundIndex = Math.floor(now / CYCLE_DURATION);
-​if (cycleElapsed < WAIT_DURATION) {
+if (cycleElapsed < WAIT_DURATION) {
 const targetRoundIndex = currentRoundIndex;
-​if (betRoundIndex === targetRoundIndex) return;
+if (betRoundIndex === targetRoundIndex) return;
 if (isProcessingBet) return;
-​const betAmt = parseFloat(betInput.value);
+const betAmt = parseFloat(betInput.value);
 if (isNaN(betAmt) || betAmt < 10) return alert("সর্বনিম্ন বেট পরিমাণ ১০ কয়েন");
 if (betAmt > currentBalance) return alert("পর্যাপ্ত কয়েন ব্যালেন্স নেই!");
-​isProcessingBet = true;
+isProcessingBet = true;
 betBtn.innerText = "প্রসেসিং...";
 betBtn.disabled = true;
-​const processingTimeout = setTimeout(() => {
+const processingTimeout = setTimeout(() => {
 if (isProcessingBet) {
 isProcessingBet = false;
 }
 }, 4000);
-​db.ref('users/' + currentUser.uid + '/balance').transaction(current => {
+db.ref('users/' + currentUser.uid + '/balance').transaction(current => {
 if (current >= betAmt) return current - betAmt;
 }, (error, committed) => {
 clearTimeout(processingTimeout);
@@ -1484,7 +1484,7 @@ if (committed) {
 activeBet = betAmt;
 betRoundIndex = targetRoundIndex;
 hasCashedOut = false;
-​betBtn.innerText = "বেট প্লেসড";
+betBtn.innerText = "বেট প্লেসড";
 betBtn.className = "av-btn av-btn-action av-btn-waiting";
 betBtn.disabled = true;
 renderMyLiveBetUI(targetRoundIndex, false);
@@ -1497,33 +1497,33 @@ else if (cycleElapsed >= WAIT_DURATION && betRoundIndex === currentRoundIndex &&
 const targetCrashPoint = getDeterministicCrashPoint(currentRoundIndex);
 const totalFlightTimeNeeded = calculateTimeFromMultiplier(targetCrashPoint);
 let flyElapsed = (cycleElapsed - WAIT_DURATION) / 1000;
-​if (flyElapsed >= totalFlightTimeNeeded) return;
-​hasCashedOut = true;
+if (flyElapsed >= totalFlightTimeNeeded) return;
+hasCashedOut = true;
 cashedMultiplier = currentLocalMult;
 cashedAmount = activeBet * cashedMultiplier;
-​betBtn.innerText = "CASHED OUT\n(" + cashedAmount.toFixed(2) + " কয়েন)";
+betBtn.innerText = "CASHED OUT\n(" + cashedAmount.toFixed(2) + " কয়েন)";
 betBtn.className = "av-btn av-btn-action av-btn-waiting";
 betBtn.disabled = true;
-​db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) + cashedAmount);
+db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) + cashedAmount);
 db.ref('users/' + currentUser.uid + '/wins').transaction(w => (w || 0) + 1);
 db.ref('users/' + currentUser.uid + '/games').transaction(g => (g || 0) + 1);
-​cashoutBannerContainer.innerHTML = '<div class="av-cashout-banner">CASHED OUT ' + cashedAmount.toFixed(2) + ' কয়েন (' + cashedMultiplier.toFixed(2) + 'x)</div>';
+cashoutBannerContainer.innerHTML = '<div class="av-cashout-banner">CASHED OUT ' + cashedAmount.toFixed(2) + ' কয়েন (' + cashedMultiplier.toFixed(2) + 'x)</div>';
 renderMyLiveBetUI(currentRoundIndex, false);
 }
 });
-​const BK_ITEMS = ['🥊', '👑', '🔥', '⚡', '👊', '💎', '🥇'];
+const BK_ITEMS = ['🥊', '👑', '🔥', '⚡', '👊', '💎', '🥇'];
 const BK_SYMBOL_VALUES = {
 '🥊': 1.2, '👑': 2.0, '🔥': 1.0, '⚡': 0.8, '👊': 0.6, '💎': 1.5, '🥇': 0.5
 };
 let BK_BET_OPTIONS = [1.00, 2.00, 3.00, 5.00, 10.00];
 const BK_MULTIPLIER_STEPS = [1, 2, 3, 5];
-​let bkCurrentBetIndex = 0;
+let bkCurrentBetIndex = 0;
 let bkIsSpinning = false;
 let bkCurrentMultiplierIndex = 0;
 let bkCurrentSpinTotalWin = 0;
 let bkBoardState = Array(25).fill('');
 let bkAudioCtx = null;
-​function initBkAudio() {
+function initBkAudio() {
 if (!bkAudioCtx) {
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 if (AudioContextClass) bkAudioCtx = new AudioContextClass();
@@ -1532,12 +1532,12 @@ if (bkAudioCtx && bkAudioCtx.state === 'suspended') {
 bkAudioCtx.resume().catch(() => {});
 }
 }
-​function playBkSound(type) {
+function playBkSound(type) {
 try {
 initBkAudio();
 if (!bkAudioCtx || bkAudioCtx.state !== 'running') return;
 const now = bkAudioCtx.currentTime;
-​if (type === 'spin') {
+if (type === 'spin') {
 const osc = bkAudioCtx.createOscillator();
 const gain = bkAudioCtx.createGain();
 osc.connect(gain); gain.connect(bkAudioCtx.destination);
@@ -1574,14 +1574,14 @@ osc1.stop(now + 0.4); osc2.stop(now + 0.4);
 }
 } catch (e) {}
 }
-​function bkFormatDecimal(num) {
+function bkFormatDecimal(num) {
 return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
 }
-​function getBkCellIndex(row, col) {
+function getBkCellIndex(row, col) {
 return row * 5 + col;
 }
-​const bkBoardContainer = document.getElementById('bk-board');
-​function initBkBoardDOM() {
+const bkBoardContainer = document.getElementById('bk-board');
+function initBkBoardDOM() {
 bkBoardContainer.innerHTML = '';
 for (let i = 0; i < 25; i++) {
 const cell = document.createElement('div');
@@ -1593,7 +1593,7 @@ bkBoardState[i] = randomItem;
 bkBoardContainer.appendChild(cell);
 }
 }
-​function updateBkMultiplierUI() {
+function updateBkMultiplierUI() {
 document.querySelectorAll('.bk-mult-box').forEach(b => b.classList.remove('active'));
 const mult = BK_MULTIPLIER_STEPS[bkCurrentMultiplierIndex];
 if (mult === 1) document.getElementById('bk-m1').classList.add('active');
@@ -1601,7 +1601,7 @@ else if (mult === 2) document.getElementById('bk-m2').classList.add('active');
 else if (mult === 3) document.getElementById('bk-m3').classList.add('active');
 else if (mult >= 5) document.getElementById('bk-m5').classList.add('active');
 }
-​function changeBkBet(direction) {
+function changeBkBet(direction) {
 if (bkIsSpinning) return;
 initBkAudio();
 bkCurrentBetIndex += direction;
@@ -1609,12 +1609,12 @@ if (bkCurrentBetIndex < 0) bkCurrentBetIndex = 0;
 if (bkCurrentBetIndex >= BK_BET_OPTIONS.length) bkCurrentBetIndex = BK_BET_OPTIONS.length - 1;
 document.getElementById('bk-bet-display').innerText = bkFormatDecimal(BK_BET_OPTIONS[bkCurrentBetIndex]);
 }
-​function applyBkConfigToUI() {
+function applyBkConfigToUI() {
 BK_BET_OPTIONS = bkConfig.betOptions;
 if (bkCurrentBetIndex >= BK_BET_OPTIONS.length) bkCurrentBetIndex = BK_BET_OPTIONS.length - 1;
 const betDisplayEl = document.getElementById('bk-bet-display');
 if (betDisplayEl) betDisplayEl.innerText = bkFormatDecimal(BK_BET_OPTIONS[bkCurrentBetIndex]);
-​const spinBtn = document.getElementById('bk-spin-btn');
+const spinBtn = document.getElementById('bk-spin-btn');
 const statusEl = document.getElementById('bk-status');
 if (spinBtn) {
 if (!bkConfig.enabled) {
@@ -1625,35 +1625,35 @@ spinBtn.disabled = false;
 }
 }
 }
-​function setBkControlsDisabled(disabled) {
+function setBkControlsDisabled(disabled) {
 document.getElementById("bk-spin-btn").disabled = disabled;
 document.getElementById("bk-bet-minus-btn").disabled = disabled;
 document.getElementById("bk-bet-plus-btn").disabled = disabled;
 }
-​function handleBkSpinClick() {
+function handleBkSpinClick() {
 if (bkIsSpinning) return;
 initBkAudio();
-​if (!currentUser) { alert("প্রথমে Login করুন!"); return; }
+if (!currentUser) { alert("প্রথমে Login করুন!"); return; }
 if (!bkConfig.enabled) {
 const statusEl = document.getElementById("bk-status");
 statusEl.innerText = "গেমটি বর্তমানে বন্ধ আছে 🚧";
 statusEl.style.color = "#ff9900";
 return;
 }
-​const activeBet = BK_BET_OPTIONS[bkCurrentBetIndex];
-​if (!bkConfig.testMode && currentBalance < activeBet) {
+const activeBet = BK_BET_OPTIONS[bkCurrentBetIndex];
+if (!bkConfig.testMode && currentBalance < activeBet) {
 const statusEl = document.getElementById("bk-status");
 statusEl.innerText = "পর্যাপ্ত কয়েন নেই! 😢";
 statusEl.style.color = "#ff3333";
 return;
 }
-​bkIsSpinning = true;
+bkIsSpinning = true;
 setBkControlsDisabled(true);
-​if (bkConfig.testMode) {
+if (bkConfig.testMode) {
 startBkSpinSequence(activeBet);
 return;
 }
-​db.ref('users/' + currentUser.uid + '/balance').transaction(cur => {
+db.ref('users/' + currentUser.uid + '/balance').transaction(cur => {
 if ((cur || 0) >= activeBet) return (cur || 0) - activeBet;
 }, (error, committed) => {
 if (!committed) {
@@ -1667,20 +1667,20 @@ return;
 startBkSpinSequence(activeBet);
 });
 }
-​function startBkSpinSequence(activeBet) {
+function startBkSpinSequence(activeBet) {
 bkCurrentSpinTotalWin = 0;
 bkCurrentMultiplierIndex = 0;
 updateBkMultiplierUI();
-​document.getElementById("bk-win-display").innerText = "0.00";
+document.getElementById("bk-win-display").innerText = "0.00";
 const statusEl = document.getElementById("bk-status");
 statusEl.innerText = "রিল ঘুরছে... 🔥";
 statusEl.style.color = "#aaa";
-​const allCells = document.querySelectorAll('.bk-slot-cell');
+const allCells = document.querySelectorAll('.bk-slot-cell');
 allCells.forEach(cell => {
 cell.classList.remove('bk-explode');
 cell.classList.add('bk-spinning');
 });
-​let spinCounter = 0;
+let spinCounter = 0;
 const spinInterval = setInterval(() => {
 playBkSound('spin');
 for (let i = 0; i < 25; i++) {
@@ -1689,7 +1689,7 @@ bkBoardState[i] = randSym;
 document.getElementById(bk-cell-${i}).innerText = randSym;
 }
 spinCounter++;
-​if (spinCounter >= 10) {
+if (spinCounter >= 10) {
 clearInterval(spinInterval);
 allCells.forEach(cell => cell.classList.remove('bk-spinning'));
 setTimeout(() => {
@@ -1698,29 +1698,29 @@ evaluateBkCascade(activeBet);
 }
 }, bkConfig.animationSpeedMs || 90);
 }
-​function findBkLeftToRightMatches() {
+function findBkLeftToRightMatches() {
 const winningCellIndices = new Set();
 let totalMatchUnits = 0;
-​BK_ITEMS.forEach(symbol => {
+BK_ITEMS.forEach(symbol => {
 const connectedIndices = new Set();
 let maxColumnReached = -1;
-​let currentColumnNodes = [];
+let currentColumnNodes = [];
 for (let r = 0; r < 5; r++) {
 const idx = getBkCellIndex(r, 0);
 if (bkBoardState[idx] === symbol) {
 currentColumnNodes.push({ row: r, col: 0, index: idx });
 }
 }
-​if (currentColumnNodes.length === 0) return;
-​let colIndex = 0;
+if (currentColumnNodes.length === 0) return;
+let colIndex = 0;
 while (currentColumnNodes.length > 0 && colIndex < 5) {
 maxColumnReached = colIndex;
 currentColumnNodes.forEach(n => connectedIndices.add(n.index));
-​if (colIndex === 4) break;
-​const nextColumnIndex = colIndex + 1;
+if (colIndex === 4) break;
+const nextColumnIndex = colIndex + 1;
 const nextColumnNodes = [];
 const nextColVisited = new Set();
-​currentColumnNodes.forEach(currentNode => {
+currentColumnNodes.forEach(currentNode => {
 const candidateRows = [currentNode.row - 1, currentNode.row, currentNode.row + 1];
 candidateRows.forEach(r => {
 if (r >= 0 && r < 5) {
@@ -1732,43 +1732,43 @@ nextColumnNodes.push({ row: r, col: nextColumnIndex, index: nextIdx });
 }
 });
 });
-​currentColumnNodes = nextColumnNodes;
+currentColumnNodes = nextColumnNodes;
 colIndex++;
 }
-​if (maxColumnReached >= 2) {
+if (maxColumnReached >= 2) {
 connectedIndices.forEach(idx => winningCellIndices.add(idx));
 const symbolBaseVal = BK_SYMBOL_VALUES[symbol] || 1.0;
 totalMatchUnits += (connectedIndices.size * symbolBaseVal);
 }
 });
-​return {
+return {
 winningIndices: Array.from(winningCellIndices),
 matchUnits: totalMatchUnits
 };
 }
-​function evaluateBkCascade(activeBet) {
+function evaluateBkCascade(activeBet) {
 const evalResult = findBkLeftToRightMatches();
 const winningIndices = evalResult.winningIndices;
-​if (winningIndices.length > 0) {
+if (winningIndices.length > 0) {
 const currentMultiplier = BK_MULTIPLIER_STEPS[bkCurrentMultiplierIndex];
 const rtpFactor = (typeof bkConfig.rtpFactor === 'number' && bkConfig.rtpFactor > 0) ? bkConfig.rtpFactor : 1.0;
 const userRtp = (typeof bkConfig.rtp === 'number' && bkConfig.rtp > 0) ? (bkConfig.rtp / 100) : 0.95;
 const stepWin = evalResult.matchUnits * (activeBet * 0.4) * currentMultiplier * rtpFactor * userRtp;
-​bkCurrentSpinTotalWin += stepWin;
-​document.getElementById("bk-win-display").innerText = bkFormatDecimal(bkCurrentSpinTotalWin);
-​const statusEl = document.getElementById("bk-status");
+bkCurrentSpinTotalWin += stepWin;
+document.getElementById("bk-win-display").innerText = bkFormatDecimal(bkCurrentSpinTotalWin);
+const statusEl = document.getElementById("bk-status");
 statusEl.innerText = 💥 চেইন হিট (${currentMultiplier}X)! উইন: +${bkFormatDecimal(stepWin)} কয়েন;
 statusEl.style.color = "#00ff00";
-​playBkSound('blast');
+playBkSound('blast');
 if (currentMultiplier > 1) {
 setTimeout(() => playBkSound('win'), 150);
 }
-​winningIndices.forEach(idx => {
+winningIndices.forEach(idx => {
 const cell = document.getElementById(bk-cell-${idx});
 cell.classList.add('bk-explode');
 bkBoardState[idx] = '';
 });
-​setTimeout(() => {
+setTimeout(() => {
 for (let col = 0; col < 5; col++) {
 let existingSymbolsInCol = [];
 for (let row = 0; row < 5; row++) {
@@ -1777,13 +1777,13 @@ if (bkBoardState[idx] !== '') {
 existingSymbolsInCol.push(bkBoardState[idx]);
 }
 }
-​const emptyCount = 5 - existingSymbolsInCol.length;
+const emptyCount = 5 - existingSymbolsInCol.length;
 const newSymbols = [];
 for (let k = 0; k < emptyCount; k++) {
 newSymbols.push(BK_ITEMS[Math.floor(Math.random() * BK_ITEMS.length)]);
 }
-​const fullColSymbols = newSymbols.concat(existingSymbolsInCol);
-​for (let row = 0; row < 5; row++) {
+const fullColSymbols = newSymbols.concat(existingSymbolsInCol);
+for (let row = 0; row < 5; row++) {
 const idx = getBkCellIndex(row, col);
 bkBoardState[idx] = fullColSymbols[row];
 const cell = document.getElementById(bk-cell-${idx});
@@ -1791,7 +1791,7 @@ cell.innerText = fullColSymbols[row];
 cell.classList.remove('bk-explode');
 }
 }
-​for (let col = 0; col < 5; col++) {
+for (let col = 0; col < 5; col++) {
 setTimeout(() => {
 for (let row = 0; row < 5; row++) {
 const idx = getBkCellIndex(row, col);
@@ -1802,15 +1802,15 @@ setTimeout(() => { cell.style.transform = 'scale(1)'; }, 120);
 playBkSound('spin');
 }, col * 80);
 }
-​if (bkCurrentMultiplierIndex < BK_MULTIPLIER_STEPS.length - 1) {
+if (bkCurrentMultiplierIndex < BK_MULTIPLIER_STEPS.length - 1) {
 bkCurrentMultiplierIndex++;
 }
 updateBkMultiplierUI();
-​setTimeout(() => {
+setTimeout(() => {
 evaluateBkCascade(activeBet);
 }, 650);
-​}, 350);
-​} else {
+}, 350);
+} else {
 const statusEl = document.getElementById("bk-status");
 if (bkCurrentSpinTotalWin === 0) {
 statusEl.innerText = "আবার চেষ্টা করুন ❌";
@@ -1819,7 +1819,7 @@ statusEl.style.color = "#ff3333";
 statusEl.innerText = 💰 চেইন শেষ! মোট উইন: ${bkFormatDecimal(bkCurrentSpinTotalWin)} কয়েন;
 statusEl.style.color = "#ffcc00";
 }
-​if (currentUser && !bkConfig.testMode) {
+if (currentUser && !bkConfig.testMode) {
 const uidRef = 'users/' + currentUser.uid;
 if (bkCurrentSpinTotalWin > 0) {
 db.ref(uidRef + '/balance').transaction(cur => (cur || 0) + bkCurrentSpinTotalWin);
@@ -1827,15 +1827,15 @@ db.ref(uidRef + '/boxingKingWins').transaction(w => (w || 0) + 1);
 }
 db.ref(uidRef + '/boxingKingGames').transaction(g => (g || 0) + 1);
 }
-​bkIsSpinning = false;
+bkIsSpinning = false;
 setBkControlsDisabled(bkConfig.enabled === false);
 }
 }
-​function toggleBkFullScreen() {
+function toggleBkFullScreen() {
 initBkAudio();
 const container = document.getElementById("bkGameContainer");
 const isFS = document.fullscreenElement || document.webkitFullscreenElement;
-​if (!isFS) {
+if (!isFS) {
 if (container.requestFullscreen) container.requestFullscreen().catch(() => {});
 else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
 } else {
@@ -1843,7 +1843,7 @@ if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
 else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
 }
 }
-​/* COLOR GEMS — same lobby/auth/shared-wallet/admin-control pattern as Boxing King /
+/* COLOR GEMS — same lobby/auth/shared-wallet/admin-control pattern as Boxing King /
 const CG_ITEMS=['🔴','🟠','🟡','🟢','🔵','🟣','💎','⭐','🟤','⚫'];
 let CG_BET_OPTIONS=[1,2,3,5,10],cgBetIndex=0,cgSpinning=false,cgAuto=false,cgAutoTimer=null,cgBoardState=Array(25).fill(''),cgWin=0,cgMultiplierIndex=0;
 / Color Gems multiplier sequence follows Boxing King's 1X → 2X → 3X → 5X. /
