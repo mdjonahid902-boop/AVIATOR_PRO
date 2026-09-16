@@ -1,714 +1,1104 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Red vs Blue — Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gaming Zone - Professional Game Lobby</title>
 
-<style>
-*{box-sizing:border-box}
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#070a11;
-  color:#fff;
-  font-family:Arial,sans-serif;
-}
+    <style>
+        :root {
+            --lobby-bg: #090b10;
+            --lobby-card-bg: rgba(18, 22, 33, 0.85);
+            --lobby-accent: #ffcc00;
+            --lobby-accent-orange: #ff6600;
+            --lobby-glass-border: rgba(255, 204, 0, 0.15);
+            --lobby-text: #ffffff;
+            --lobby-text-dim: #a0aec0;
+        }
 
-.app{
-  width:min(94%,430px);
-  text-align:center;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-h1{
-  margin:0 0 5px;
-  font-size:27px;
-}
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow-x: hidden;
+            background-color: var(--lobby-bg);
+            color: var(--lobby-text);
+            user-select: none;
+        }
 
-.sub{
-  color:#8d98aa;
-  margin-bottom:18px;
-}
+        .page-screen {
+            display: none;
+            width: 100vw;
+            min-height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
 
-.coin{
-  background:#111827;
-  border:1px solid #293449;
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:25px;
-  font-size:18px;
-}
+        .page-screen.active {
+            display: flex;
+            flex-direction: column;
+        }
 
-.coin span{
-  color:#ffd43b;
-  font-weight:bold;
-}
+        .lobby-header {
+            background: rgba(15, 18, 28, 0.95);
+            border-bottom: 1px solid var(--lobby-glass-border);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
 
-/* Wheel */
+        .lobby-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.wheel-wrap{
-  position:relative;
-  width:310px;
-  height:310px;
-  margin:auto;
-}
+        .lobby-brand-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffcc00, #ff6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-.pointer{
-  position:absolute;
-  z-index:10;
-  top:-13px;
-  left:50%;
-  transform:translateX(-50%);
-  width:0;
-  height:0;
-  border-left:17px solid transparent;
-  border-right:17px solid transparent;
-  border-top:34px solid white;
-  filter:drop-shadow(0 3px 4px #000);
-}
+        .lobby-brand-subtitle {
+            font-size: 0.65rem;
+            color: var(--lobby-text-dim);
+            letter-spacing: 0.5px;
+        }
 
-.wheel{
-  position:relative;
-  width:310px;
-  height:310px;
-  border-radius:50%;
-  border:9px solid #242c3c;
-  overflow:hidden;
+        .lobby-uid-box {
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: fit-content;
+            max-width: 100%;
+            padding: 3px 5px 3px 7px;
+            border: 1px solid rgba(255, 204, 0, 0.32);
+            border-radius: 7px;
+            background: rgba(255, 204, 0, 0.07);
+            box-shadow: 0 0 10px rgba(255, 153, 0, 0.08);
+        }
+        .lobby-uid-label {
+            color: #ffcc00;
+            font-size: 0.56rem;
+            font-weight: 800;
+            letter-spacing: .35px;
+        }
+        .lobby-uid-value {
+            color: #fff;
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: .25px;
+            max-width: 145px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .lobby-uid-copy {
+            border: 0;
+            border-radius: 5px;
+            padding: 2px 5px;
+            background: linear-gradient(135deg, #ffcc00, #ff6600);
+            color: #15100a;
+            font-size: 0.55rem;
+            font-weight: 900;
+            cursor: pointer;
+        }
+        .lobby-uid-copy:active { transform: scale(.94); }
 
-  background:conic-gradient(
-    #e63946 0deg 36deg,
-    #1769e0 36deg 72deg,
-    #e63946 72deg 108deg,
-    #1769e0 108deg 144deg,
-    #e63946 144deg 180deg,
-    #1769e0 180deg 216deg,
-    #e63946 216deg 252deg,
-    #1769e0 252deg 288deg,
-    #e63946 288deg 324deg,
-    #1769e0 324deg 360deg
-  );
+        .lobby-container {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 16px;
+            box-sizing: border-box;
+        }
 
-  box-shadow:
-    0 0 0 4px #111827,
-    0 0 35px rgba(255,255,255,.12);
+        .category-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-  transition:transform 4.5s cubic-bezier(.12,.78,.16,1);
-}
+        .category-badge {
+            background: linear-gradient(135deg, #ff6600, #e53935);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
+        }
 
-/* Slot separator lines */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
 
-.wheel::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  background:
-    repeating-conic-gradient(
-      from 0deg,
-      transparent 0deg 35.2deg,
-      rgba(255,255,255,.8) 35.2deg 36deg
-    );
-}
+        .game-card {
+            background: var(--lobby-card-bg);
+            border: 1px solid var(--lobby-glass-border);
+            border-radius: 18px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+        }
 
-/* Center */
+        .game-card:active {
+            transform: scale(0.94);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+        }
 
-.center{
-  position:absolute;
-  z-index:5;
-  width:72px;
-  height:72px;
-  border-radius:50%;
-  background:#101522;
-  border:5px solid white;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  box-shadow:0 3px 15px rgba(0,0,0,.5);
-}
+        .card-image-box {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background: #151924;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-/* Bet controls */
+        .card-visual-svg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
 
-.label{
-  margin:25px 0 10px;
-  color:#aeb7c7;
-}
+        .game-title {
+            margin-top: 8px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
 
-.colors{
-  display:flex;
-  gap:12px;
-}
+        .provider-tag {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: rgba(0, 0, 0, 0.75);
+            color: #ffcc00;
+            font-size: 0.55rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+            border: 0.5px solid rgba(255, 204, 0, 0.3);
+        }
 
-.color-btn{
-  flex:1;
-  border:0;
-  border-radius:11px;
-  padding:14px;
-  color:white;
-  font-size:17px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:.2s;
-}
+        .back-to-lobby-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 99999;
+            width: 142px;
+            min-height: 44px;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #ff3333, #990000);
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 0 14px;
+            border-radius: 22px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            outline: none;
+        }
 
-.red{
-  background:#e63946;
-}
+        .back-to-lobby-btn:active { transform: scale(0.92); }
 
-.blue{
-  background:#1769e0;
-}
+        .global-announce-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 99998;
+            background: linear-gradient(90deg, #ff6600, #ffcc00);
+            color: #1a1a1a;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 6px 40px 6px 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
 
-.color-btn.selected{
-  outline:3px solid white;
-  transform:scale(1.03);
-}
+        body.announce-visible .page-screen { margin-top: 28px; }
+        body.announce-visible .global-user-bar { top: 36px; }
 
-.amount{
-  width:100%;
-  margin:13px 0;
-  padding:13px;
-  border-radius:10px;
-  border:1px solid #344054;
-  background:#101725;
-  color:white;
-  font-size:17px;
-  text-align:center;
-}
+        .global-user-bar {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 18, 28, 0.92);
+            border: 1px solid rgba(255, 204, 0, 0.25);
+            border-radius: 20px;
+            padding: 6px 8px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            max-width: calc(100vw - 100px);
+        }
 
-.spin{
-  width:100%;
-  padding:15px;
-  border:0;
-  border-radius:11px;
-  background:linear-gradient(90deg,#ffd000,#ff6a00);
-  color:#111;
-  font-size:19px;
-  font-weight:bold;
-  cursor:pointer;
-}
+        .global-user-bar #user-email-display {
+            font-size: 0.65rem;
+            color: #a0aec0;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: none;
+        }
 
-.spin:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
+        @media (min-width: 420px) {
+            .global-user-bar #user-email-display { display: inline; }
+        }
 
-.sound{
-  margin-top:12px;
-  background:#1b2434;
-  color:white;
-  border:1px solid #334155;
-  border-radius:9px;
-  padding:10px 16px;
-  cursor:pointer;
-}
+        /* AVIATOR STYLES */
+        #aviator-game-screen {
+            background-color: #0e121b;
+            color: #ffffff;
+            padding: 8px;
+            box-sizing: border-box;
+            justify-content: space-between;
+        }
 
-.result{
-  min-height:52px;
-  margin-top:18px;
-  font-size:19px;
-  font-weight:bold;
-  line-height:1.5;
-}
+        .av-header {
+            background: rgba(21, 28, 41, 0.95); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
+            height: 46px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-top: 36px;
+        }
 
-.history{
-  margin-top:12px;
-  display:flex;
-  justify-content:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
+        .av-logo { font-size: 0.9rem; font-weight: 900; color: #e53935; }
+        .av-balance-box { background: rgba(0, 0, 0, 0.6); border: 1px solid #43a047; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; }
+        .av-balance-amount { color: #81c784; font-weight: bold; }
+        
+        .av-btn { background: #1e88e5; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.72rem; }
+        .av-btn-deposit { background: #43a047; }
+        .av-btn-withdraw { background: #fb8c00; }
+        .av-btn-logout { background: #455a64; }
 
-.history span{
-  width:27px;
-  height:27px;
-  border-radius:50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:12px;
-  font-weight:bold;
-}
+        .av-container { display: flex; flex-direction: column; gap: 8px; flex: 1; margin-top: 8px; overflow: hidden; }
 
-.note{
-  color:#667085;
-  font-size:11px;
-  margin-top:15px;
-}
-</style>
+        .av-glass-card { 
+            background: rgba(21, 28, 41, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 12px; padding: 8px; display: flex; flex-direction: column; height: 100%; overflow: hidden;
+        }
+
+        .av-history-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 6px; scrollbar-width: none; flex-shrink: 0; height: 28px; }
+        .av-history-bar::-webkit-scrollbar { display: none; }
+        .av-history-item {
+            background: rgba(0, 0, 0, 0.5); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold;
+            white-space: nowrap; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center;
+        }
+        .av-history-item.low { color: #00e5ff; }
+        .av-history-item.mid { color: #c084fc; }
+        .av-history-item.high { color: #ffd700; border-color: rgba(255,215,0,0.4); }
+
+        .av-game-display {
+            position: relative; height: 48%; width: 100%;
+            background: radial-gradient(circle at bottom left, #121926 0%, #080b10 80%);
+            border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+        }
+
+        #game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .av-multiplier-text { font-size: 2.2rem; font-weight: 900; z-index: 2; text-shadow: 0 0 20px rgba(0, 0, 0, 0.9); text-align: center; }
+        .av-multiplier-text.crashed { color: #e53935; }
+
+        .av-cashout-banner {
+            position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 4px 14px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: bold; z-index: 10; white-space: nowrap;
+        }
+
+        .av-controls-panel { margin-top: 8px; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+        .av-input-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .av-input-group label { font-size: 0.68rem; color: #78909c; }
+        .av-input-group input { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); color: white; padding: 8px; border-radius: 6px; font-size: 0.85rem; width: 100%; outline: none; }
+
+        .av-btn-action { height: 42px; font-size: 0.8rem; flex: 1.2; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 800; border-radius: 6px; text-transform: uppercase; }
+        .av-btn-bet { background: linear-gradient(180deg, #43a047, #2e7d32); color: white; }
+        .av-btn-cashout { background: linear-gradient(180deg, #fdd835, #f57f17); color: #000; }
+        .av-btn-waiting { background: #37474f; color: #90a4ae; cursor: not-allowed; }
+
+        .av-live-bets-container { margin-top: 8px; flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; overflow: hidden; }
+        .av-live-bets-header { background: rgba(255,255,255,0.03); padding: 6px 10px; font-size: 0.68rem; color: #78909c; font-weight: bold; display: grid; grid-template-columns: 2fr 1fr 1fr; }
+        .av-live-bets-list { flex: 1; overflow-y: auto; }
+        .av-live-bet-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 6px 10px; font-size: 0.72rem; align-items: center; }
+        .av-live-bet-row.cashed { background: rgba(67, 160, 71, 0.15); color: #81c784; }
+        .av-live-bet-row.lost { background: rgba(229, 57, 53, 0.15); color: #ef9a9a; }
+        .av-no-bet-text { text-align: center; padding: 12px; font-size: 0.72rem; color: #78909c; }
+
+        .av-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 200000; }
+        .hidden { display: none !important; }
+        .av-modal { width: 90%; max-width: 320px; }
+        .av-modal h2 { margin-bottom: 10px; font-size: 0.95rem; }
+        .av-modal .form-group { margin-bottom: 8px; }
+        .av-modal .form-group input, .av-modal .form-group select { width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255, 255, 255, 0.08); color: white; border-radius: 6px; font-size: 0.85rem; outline: none; }
+        .av-error-msg { color: #e53935; font-size: 0.72rem; margin-top: 4px; text-align: center; }
+
+        /* BOXING KING STYLES */
+        #boxing-king-screen {
+            background: linear-gradient(rgba(13, 1, 26, 0.85), rgba(13, 1, 26, 0.95)), 
+                        url('https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .bk-game-container {
+            width: 100%;
+            max-width: 430px;
+            background: rgba(20, 5, 35, 0.85); 
+            border: 3px solid #ffcc00;
+            border-radius: 24px;
+            padding: 15px;
+            box-shadow: 0 0 40px rgba(255, 204, 0, 0.25);
+            text-align: center;
+            backdrop-filter: blur(8px);
+            margin-top: 30px;
+            box-sizing: border-box;
+        }
+
+        .bk-game-header h1 {
+            font-size: 22px;
+            color: #ffcc00;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px #ff3300, 2px 2px 0px #000;
+            margin: 0 0 2px 0;
+        }
+
+        .bk-game-header span {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #ff9900;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .bk-fullscreen-toggle-btn {
+            background: linear-gradient(135deg, #00ffff, #0088cc);
+            color: black;
+            border: 2px solid #fff;
+            padding: 5px 12px;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            outline: none;
+        }
+
+        .bk-multiplier-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .bk-mult-box {
+            background: #222;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            border: 1px solid #333;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bk-mult-box.active {
+            background: linear-gradient(135deg, #ffcc00, #ff6600);
+            color: black;
+            border-color: #fff;
+            box-shadow: 0 0 12px #ffcc00;
+            transform: scale(1.1);
+        }
+
+        .bk-reels-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 8px;
+            border-radius: 12px;
+            border: 2px solid #2a1b40;
+            margin-bottom: 8px;
+        }
+
+        .bk-slot-cell {
+            aspect-ratio: 1 / 1;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #222 0%, #050505 100%);
+            border-radius: 8px;
+            border: 1.5px solid #ffcc00;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+            transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
+        }
+
+        .bk-explode {
+            transform: scale(0) rotate(45deg);
+            opacity: 0;
+            background: radial-gradient(circle, #fff 0%, #ff0055 100%) !important;
+        }
+
+        .bk-spinning {
+            transform: scaleY(0.9);
+            opacity: 0.7;
+        }
+
+        .bk-status {
+            margin: 6px 0;
+            font-size: 13px;
+            font-weight: bold;
+            min-height: 20px;
+            color: #aaa;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bk-dashboard {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 204, 0, 0.2);
+        }
+
+        .bk-dash-box { display: flex; flex-direction: column; }
+        .bk-dash-label { font-size: 9px; color: #ffcc00; text-transform: uppercase; }
+        .bk-dash-value { font-size: 14px; font-weight: bold; color: #fff; }
+
+        #bk-bal { color: #00ffcc; }
+        #bk-win-display { color: #ff3366; }
+        #bk-bet-display { color: #ffcc00; }
+
+        .bk-controls-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 12px;
+            border-radius: 50px;
+        }
+
+        .bk-bet-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 2px solid #ffcc00; background: #222; color: #ffcc00;
+            font-size: 20px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; outline: none;
+        }
+        .bk-bet-btn:disabled { border-color: #444; color: #444; cursor: not-allowed; opacity: 0.6; }
+
+        .bk-spin-btn-container { background: radial-gradient(circle, #5a4000 0%, transparent 70%); padding: 3px; border-radius: 50%; }
+        .bk-spin-btn {
+            width: 65px; height: 65px; font-size: 14px; border: 3px solid #fff; border-radius: 50%;
+            background: linear-gradient(135deg, #ffe066 0%, #ff9900 50%, #b36600 100%);
+            color: #000; cursor: pointer; font-weight: bold; text-transform: uppercase; outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .bk-spin-btn:disabled { background: linear-gradient(135deg, #555, #222); color: #666; border-color: #444; cursor: not-allowed; }
+
+        /* RED vs BLUE STYLES */
+        #redblue-game-screen { background: radial-gradient(circle at 50% 20%,#17213b 0,#090b10 55%); padding: 10px; align-items: center; justify-content: center; }
+        .rb-container { width: 100%; max-width: 460px; background: #0f1420e8; border: 1px solid #ffffff18; border-radius: 24px; padding: 14px; box-shadow: 0 0 35px #000b; text-align: center; margin-top: 20px; }
+        .rb-title { font-size: 22px; font-weight: 900; background: linear-gradient(90deg,#ff3b3b,#fff,#3388ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .rb-sub { font-size: 9px; color: #93a4bd; letter-spacing: 1px; margin-bottom: 10px; }
+        .wheel-wrap { position: relative; width: min(78vw,310px); aspect-ratio: 1; margin: 8px auto 16px; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 7px solid #e8edf7; box-shadow: 0 0 0 5px #111827,0 0 35px #000; transition: transform 3.2s cubic-bezier(.10,.72,.12,1); background: #111827; position: relative; overflow: hidden; }
+        .wheel:after { content:""; position: absolute; inset: 12%; border-radius: 50%; border: 2px dashed #fff8; }
+        .wheel-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 66px; height: 66px; border-radius: 50%; background: #111827; border: 4px solid #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; z-index: 3; box-shadow: 0 0 20px #000; }
+        .pointer { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); z-index: 5; width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 30px solid #ffcc00; filter: drop-shadow(0 2px 3px #000); }
+        .rb-select { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin-bottom: 9px; }
+        .rb-select button { min-width: 0; padding: 10px 4px; border-radius: 10px; border: 2px solid transparent; font-weight: 900; font-size: 13px; }
+        .rb-select .chosen { border-color: #fff; box-shadow: 0 0 16px #fff6; transform: translateY(-1px); }
+        .rb-red { background: #e53935; color: #fff; } .rb-blue { background: #1976d2; color: #fff; } .rb-black { background: #111827; color: #fff; } .rb-white { background: #f8fafc; color: #111827; border-color: #64748b!important; }
+        .rb-row { display: flex; gap: 8px; } .rb-row input { flex: 1; background: #0009; border: 1px solid #ffffff18; color: #fff; border-radius: 9px; padding: 10px; outline: none; }
+        .rb-spin { width: 100%; margin-top: 9px; padding: 13px; border: 0; border-radius: 12px; background: linear-gradient(135deg,#ffcc00,#ff6600); font-size: 17px; font-weight: 1000; color: #111; }
+        .rb-balance { margin: 7px 0; color: #7ee7b2; font-weight: 800; }
+        .rb-status { min-height: 22px; margin: 7px 0; font-size: .8rem; font-weight: 800; }
+        .rb-live-countdown { margin: 10px 0 8px; padding: 9px 10px; border-radius: 14px; text-align: center; background: linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.18)); border: 1px solid rgba(255,204,0,.2); }
+        .rb-countdown-label { font-size: 9px; letter-spacing: 1.4px; color: #9aa9bd; font-weight: 900; }
+        .rb-countdown { font-size: 30px; line-height: 34px; font-weight: 1000; color: #ffcc00; }
+        .rb-round-status { font-size: 10px; font-weight: 900; color: #7ee7b2; letter-spacing: .8px; }
+        .rb-note { font-size: 9px; color: #7f8da3; margin-top: 10px; }
+        .sound-btn { background: #374151; color: #fff; border: 1px solid #ffffff22; padding: 6px 10px; border-radius: 20px; font-size: 11px; }
+
+        /* COLOR GEMS STYLES */
+        #color-gems-screen { background: radial-gradient(circle at 50% 10%,#243e87 0,#10152e 28%,#060812 72%); padding: 8px; align-items: center; justify-content: center; overflow: auto; }
+        .cg-container { width: 100%; max-width: 430px; background: linear-gradient(#14203d,#080b16); border: 2px solid #5975a8; border-radius: 18px; padding: 8px; box-shadow: 0 0 30px #18366d,inset 0 0 22px #000; }
+        .cg-top { background: linear-gradient(180deg,#3969bd,#17316f 55%,#0d193a); border: 2px solid #ffd84d; border-radius: 11px; text-align: center; padding: 3px 5px 6px; box-shadow: 0 0 14px #247cff88,inset 0 0 8px #000; }
+        .cg-ways { font-size: 18px; font-weight: 1000; letter-spacing: 1.5px; color: #ffdc55; text-shadow: 0 2px #8b4300,0 0 8px #ffd000; }
+        .cg-mults { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; margin-top: 2px; padding: 3px; border-radius: 7px; background: #0b1630; }
+        .cg-mults span { font-size: 15px; font-weight: 1000; padding: 4px 0; border-radius: 5px; color: #666; }
+        .cg-mults span.active { color: #ffe45b; background: #1d5fb1; box-shadow: inset 0 0 8px #000,0 0 7px #ffd84d66; }
+        .cg-frame { margin-top: 7px; padding: 6px; border-radius: 13px; background: linear-gradient(135deg,#d6dbe3,#66738b 18%,#202a3c 48%,#aeb7c4 76%,#354158); border: 2px solid #e6eaf0; box-shadow: 0 0 12px #000,inset 0 0 9px #fff5; }
+        .cg-reels { position: relative; display: grid; grid-template-columns: repeat(5,1fr); gap: 2px; background: #e9edf0; padding: 2px; border-radius: 8px; overflow: hidden; }
+        .cg-cell { position: relative; aspect-ratio: .82; border: 1px solid #c5cbd3; border-radius: 3px; background: linear-gradient(145deg,#f8f8f8,#b8bdc4); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .cg-symbol { font-size: 30px; line-height: 1; filter: drop-shadow(0 3px 2px #555); position: relative; z-index: 2; }
+        .cg-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px; }
+        .cg-action { min-height: 39px; border-radius: 8px; border: 2px solid #54e7ad; color: #effff8; background: linear-gradient(#25d995,#08774f); font-weight: 1000; }
+        .cg-action.buy { border-color: #c99cff; background: linear-gradient(#a65cff,#5920a7); }
+        .cg-info { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 7px; padding: 5px; border-radius: 9px; background: linear-gradient(#301b3c,#130d1c); border: 1px solid #8c4b57; }
+        .cg-box { text-align: center; border-right: 1px solid #9c6b69; } .cg-box:last-child { border-right: 0; }
+        .cg-label { font-size: 10px; color: #ffe28b; } .cg-value { font-size: 17px; font-weight: 1000; color: #ffd83d; text-shadow: 0 0 7px #ff9d00; }
+        .cg-status { height: 22px; padding-top: 4px; text-align: center; font-size: 11px; color: #c7d6f5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cg-controls { display: grid; grid-template-columns: 43px 52px 1fr 52px 43px; align-items: center; gap: 5px; padding: 7px 5px; border-radius: 14px; background: radial-gradient(circle,#183d61,#0a1629 70%); border: 2px solid #3e7da7; }
+        .cg-icon { width: 43px; height: 43px; border-radius: 10px; border: 2px solid #6c8aa7; background: linear-gradient(#274361,#111c2f); color: #fff; font-size: 19px; font-weight: 800; }
+        .cg-spin { width: 78px; height: 78px; justify-self: center; border-radius: 50%; border: 5px solid #ffe15a; background: radial-gradient(circle at 35% 28%,#ff9a39,#ed4b1d 43%,#a81612 73%,#5b0909); color: #fff; font-size: 34px; box-shadow: 0 0 18px #ff5c28; }
+        .cg-spin:active { transform: scale(.91); } .cg-spin:disabled { opacity: .55; filter: grayscale(.3); }
+        .cg-note { text-align: center; font-size: 8px; color: #73819b; margin-top: 4px; }
+        .cg-fs { margin-bottom: 6px; width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #79a6ff; background: #17346b; color: #fff; font-weight: 800; cursor: pointer; }
+    </style>
 </head>
 
 <body>
 
-<div class="app">
+    <button class="back-to-lobby-btn hidden" id="global-back-btn" onclick="openLobby()">
+        ◀ LOBBY
+    </button>
 
-  <h1>🔴 Red vs 🔵 Blue</h1>
-  <div class="sub">10 Slot Spin Demo</div>
+    <div class="global-announce-bar hidden" id="global-announce-bar"></div>
 
-  <div class="coin">
-    🪙 Demo Coins:
-    <span id="coins">1000</span>
-  </div>
-
-  <div class="wheel-wrap">
-
-    <div class="pointer"></div>
-
-    <div id="wheel" class="wheel">
-      <div class="center">🎯</div>
+    <div class="global-user-bar hidden" id="global-user-bar" style="display:none;">
+        <span id="user-email-display"></span>
+        <button class="av-btn av-btn-logout" id="logout-btn">Exit</button>
     </div>
 
-  </div>
-
-  <div class="label">Color নির্বাচন করো</div>
-
-  <div class="colors">
-
-    <button
-      id="redBtn"
-      class="color-btn red"
-      onclick="selectColor('red')">
-      🔴 RED
-    </button>
-
-    <button
-      id="blueBtn"
-      class="color-btn blue"
-      onclick="selectColor('blue')">
-      🔵 BLUE
-    </button>
-
-  </div>
-
-  <input
-    id="amount"
-    class="amount"
-    type="number"
-    min="1"
-    value="50"
-    placeholder="Demo Coin"
-  >
-
-  <button
-    id="spinBtn"
-    class="spin"
-    onclick="spin()">
-    🎡 SPIN
-  </button>
-
-  <button
-    id="soundBtn"
-    class="sound"
-    onclick="toggleSound()">
-    🔊 Sound ON
-  </button>
-
-  <div id="result" class="result">
-    প্রথমে একটি Color নির্বাচন করো
-  </div>
-
-  <div id="history" class="history"></div>
-
-  <div class="note">
-    Educational Demo — কোনো real-money betting নেই।
-  </div>
-
-</div>
-
-
-<script>
-
-/* =========================
-   GAME STATE
-========================= */
-
-let coins = 1000;
-let selectedColor = null;
-let spinning = false;
-
-let rotation = 0;
-
-let soundEnabled = true;
-let audioContext = null;
-
-const wheel = document.getElementById("wheel");
-const coinsEl = document.getElementById("coins");
-const resultEl = document.getElementById("result");
-const spinBtn = document.getElementById("spinBtn");
-const soundBtn = document.getElementById("soundBtn");
-const historyEl = document.getElementById("history");
-
-
-/* =========================
-   SOUND SYSTEM
-========================= */
-
-function getAudio(){
-
-  if(!audioContext){
-
-    audioContext =
-      new (window.AudioContext ||
-           window.webkitAudioContext)();
-
-  }
-
-  if(audioContext.state === "suspended"){
-    audioContext.resume();
-  }
-
-  return audioContext;
-}
-
-
-function beep(
-  frequency = 500,
-  duration = .08,
-  type = "sine",
-  volume = .035
-){
-
-  if(!soundEnabled) return;
-
-  const ctx = getAudio();
-
-  const oscillator =
-    ctx.createOscillator();
-
-  const gain =
-    ctx.createGain();
-
-  oscillator.type = type;
-  oscillator.frequency.value = frequency;
-
-  gain.gain.setValueAtTime(
-    volume,
-    ctx.currentTime
-  );
-
-  gain.gain.exponentialRampToValueAtTime(
-    .001,
-    ctx.currentTime + duration
-  );
-
-  oscillator.connect(gain);
-  gain.connect(ctx.destination);
-
-  oscillator.start();
-
-  oscillator.stop(
-    ctx.currentTime + duration
-  );
-}
-
-
-/* Spin sound */
-
-function spinSound(){
-
-  if(!soundEnabled) return;
-
-  let count = 0;
-
-  const timer =
-    setInterval(() => {
-
-      beep(
-        180 + count * 20,
-        .055,
-        "square",
-        .025
-      );
-
-      count++;
-
-      if(count >= 25){
-        clearInterval(timer);
-      }
-
-    },155);
-}
-
-
-/* Result sound */
-
-function resultSound(win){
-
-  if(win){
-
-    beep(600,.12,"sine",.04);
-
-    setTimeout(
-      () => beep(850,.16,"sine",.04),
-      120
-    );
-
-  }else{
-
-    beep(220,.2,"sawtooth",.025);
-
-  }
-}
-
-
-function toggleSound(){
-
-  soundEnabled = !soundEnabled;
-
-  soundBtn.textContent =
-    soundEnabled
-      ? "🔊 Sound ON"
-      : "🔇 Sound OFF";
-
-}
-
-
-/* =========================
-   COLOR SELECTION
-========================= */
-
-function selectColor(color){
-
-  if(spinning) return;
-
-  selectedColor = color;
-
-  document
-    .getElementById("redBtn")
-    .classList.remove("selected");
-
-  document
-    .getElementById("blueBtn")
-    .classList.remove("selected");
-
-  if(color === "red"){
-
-    document
-      .getElementById("redBtn")
-      .classList.add("selected");
-
-    resultEl.textContent =
-      "🔴 RED নির্বাচন করা হয়েছে";
-
-  }else{
-
-    document
-      .getElementById("blueBtn")
-      .classList.add("selected");
-
-    resultEl.textContent =
-      "🔵 BLUE নির্বাচন করা হয়েছে";
-
-  }
-
-}
-
-
-/* =========================
-   SPIN
-========================= */
-
-function spin(){
-
-  if(spinning) return;
-
-  if(!selectedColor){
-
-    resultEl.textContent =
-      "⚠️ আগে RED অথবা BLUE নির্বাচন করো";
-
-    return;
-  }
-
-  const amount =
-    Number(
-      document.getElementById("amount").value
-    );
-
-  if(!amount || amount <= 0){
-
-    resultEl.textContent =
-      "⚠️ সঠিক Demo Coin amount দাও";
-
-    return;
-  }
-
-  if(amount > coins){
-
-    resultEl.textContent =
-      "❌ পর্যাপ্ত Demo Coin নেই";
-
-    return;
-  }
-
-
-  /* Start */
-
-  spinning = true;
-  spinBtn.disabled = true;
-
-  coins -= amount;
-  updateCoins();
-
-  resultEl.textContent =
-    "🎡 Wheel spinning...";
-
-
-  /*
-    10 slots:
-
-    0 RED
-    1 BLUE
-    2 RED
-    3 BLUE
-    4 RED
-    5 BLUE
-    6 RED
-    7 BLUE
-    8 RED
-    9 BLUE
-  */
-
-  const resultSlot =
-    Math.floor(Math.random() * 10);
-
-  const resultColor =
-    resultSlot % 2 === 0
-      ? "red"
-      : "blue";
-
-
-  /*
-    Each slot = 36 degrees.
-
-    The pointer is at the top.
-    We calculate the exact center
-    of the selected slot.
-  */
-
-  const slotCenter =
-    resultSlot * 36 + 18;
-
-  const target =
-    360 - slotCenter;
-
-
-  /*
-    Extra full rotations make
-    the animation smooth.
-  */
-
-  const fullSpins = 6 * 360;
-
-  rotation += fullSpins + target;
-
-  wheel.style.transform =
-    `rotate(${rotation}deg)`;
-
-
-  /* Sound */
-
-  spinSound();
-
-
-  /*
-    Wait until CSS animation finishes.
-  */
-
-  setTimeout(() => {
-
-    const won =
-      resultColor === selectedColor;
-
-
-    if(won){
-
-      const reward = amount * 2;
-
-      coins += reward;
-
-      resultEl.innerHTML =
-        `🎉 ${resultColor === "red"
-          ? "🔴 RED"
-          : "🔵 BLUE"} এসেছে!<br>
-         তুমি জিতেছো +${reward} Demo Coins`;
-
-    }else{
-
-      resultEl.innerHTML =
-        `😔 ${resultColor === "red"
-          ? "🔴 RED"
-          : "🔵 BLUE"} এসেছে!<br>
-         -${amount} Demo Coins`;
-
-    }
-
-
-    updateCoins();
-
-    addHistory(resultColor);
-
-    resultSound(won);
-
-    spinning = false;
-    spinBtn.disabled = false;
-
-  },4550);
-
-}
-
-
-/* =========================
-   BALANCE
-========================= */
-
-function updateCoins(){
-
-  coinsEl.textContent =
-    coins.toLocaleString();
-
-}
-
-
-/* =========================
-   HISTORY
-========================= */
-
-function addHistory(color){
-
-  const item =
-    document.createElement("span");
-
-  item.textContent =
-    color === "red" ? "R" : "B";
-
-  item.style.background =
-    color === "red"
-      ? "#e63946"
-      : "#1769e0";
-
-  historyEl.prepend(item);
-
-  /* Keep last 10 results */
-
-  while(historyEl.children.length > 10){
-
-    historyEl.removeChild(
-      historyEl.lastChild
-    );
-
-  }
-
-}
-
-</script>
-
+    <!-- AUTH MODAL -->
+    <div class="av-modal-overlay hidden" id="auth-modal">
+        <div class="av-glass-card av-modal">
+            <h2 id="auth-title">GAMING ZONE LOGIN</h2>
+            <form id="auth-form" onsubmit="return false;">
+                <div class="form-group"><input type="email" id="auth-email" placeholder="Email" required></div>
+                <div class="form-group"><input type="password" id="auth-password" placeholder="Password" required></div>
+                <button type="button" class="av-btn av-btn-deposit" style="width: 100%; padding: 8px;" id="auth-submit-btn">Login</button>
+                <div style="margin-top: 8px; font-size: 0.72rem; text-align: center;">
+                    <a href="#" id="toggle-auth-mode" style="color: #64b5f6; text-decoration: none;">Create Account</a>
+                </div>
+                <div class="av-error-msg" id="auth-error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DEPOSIT MODAL -->
+    <div class="av-modal-overlay hidden" id="deposit-modal">
+        <div class="av-glass-card av-modal">
+            <h2>➕ কয়েন ডিপোজিট</h2>
+            <div style="font-size:0.72rem;color:#78909c;margin-bottom:10px;">
+                <span id="deposit-payment-label">বিকাশ নম্বর:</span> <strong id="admin-bkash-num" style="color:#ffcc00;">লোড হচ্ছে...</strong><br>
+                টাকা পাঠিয়ে নিচের তথ্যগুলো দিন:
+            </div>
+            <div class="form-group">
+                <select id="deposit-method">
+                    <option value="bkash">বিকাশ (Bkash)</option>
+                    <option value="nagad">নগদ (Nagad)</option>
+                </select>
+            </div>
+            <div class="form-group"><input type="number" id="deposit-amount" value="500" min="100"></div>
+            <div class="form-group"><input type="text" id="deposit-trxid" placeholder="ট্রানজেকশন আইডি (TrxID) দিন" required></div>
+            <div class="av-error-msg" id="deposit-msg" style="color:#81c784;"></div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+                <button type="button" class="av-btn av-btn-deposit" id="deposit-confirm-btn" style="flex:1; padding:8px;">রিকোয়েস্ট পাঠান</button>
+                <button type="button" class="av-btn av-btn-logout" id="close-deposit-btn" style="padding:8px;">বন্ধ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div class="av-modal-overlay hidden" id="withdraw-modal">
+        <div class="av-glass-card av-modal">
+            <h2>📤 কয়েন উইথড্র</h2>
+            <div class="form-group">
+                <select id="withdraw-method">
+                    <option value="bkash">বিকাশ (Bkash)</option>
+                    <option value="nagad">নগদ (Nagad)</option>
+                </select>
+            </div>
+            <div class="form-group"><input type="number" id="withdraw-amount" placeholder="উইথড্র পরিমাণ" min="100"></div>
+            <div class="form-group"><input type="text" id="withdraw-account" placeholder="একাউন্ট নম্বর (যেমন: 017xxxxxxxx)" required></div>
+            <div class="av-error-msg" id="withdraw-msg" style="color:#ef9a9a;"></div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+                <button type="button" class="av-btn av-btn-withdraw" id="withdraw-confirm-btn" style="flex:1; padding:8px;">রিকোয়েস্ট পাঠান</button>
+                <button type="button" class="av-btn av-btn-logout" id="close-withdraw-btn" style="padding:8px;">বন্ধ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div class="page-screen active" id="lobby-screen">
+        <header class="lobby-header">
+            <div class="lobby-brand">
+                <div>
+                    <div class="lobby-brand-title">👑 GAMING ZONE</div>
+                    <div class="lobby-brand-subtitle">CHOOSE YOUR GAME</div>
+                    <div class="lobby-uid-box">
+                        <span class="lobby-uid-label">UID</span>
+                        <span class="lobby-uid-value" id="lobby-user-uid">—</span>
+                        <button type="button" class="lobby-uid-copy" id="copy-uid-btn" onclick="copyLobbyUid()">📋 COPY</button>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <div class="av-balance-box" style="padding: 3px 6px; font-size: 0.7rem;">🪙 <span class="av-balance-amount" id="lobby-bal">0.00</span></div>
+                <button class="av-btn av-btn-deposit" id="deposit-btn" style="padding: 4px 8px; font-size: 0.65rem;">➕ Deposit</button>
+                <button class="av-btn av-btn-withdraw" id="withdraw-btn" style="padding: 4px 8px; font-size: 0.65rem;">📤 Withdraw</button>
+            </div>
+        </header>
+        <main class="lobby-container">
+            <div class="category-bar"><div class="category-badge">🔥 HOT GAMES</div></div>
+            <div class="games-grid" id="lobby-games-grid"></div>
+        </main>
+    </div>
+
+    <!-- AVIATOR SCREEN -->
+    <div class="page-screen" id="aviator-game-screen">
+        <header class="av-header">
+            <div class="av-logo">✈️ AVIATOR PRO</div>
+            <button class="av-btn" id="av-fs-btn" onclick="toggleAviatorFullScreen()" style="padding: 3px 10px; font-size: 0.65rem; background: #0088cc;">📱 ফুলস্ক্রিন</button>
+        </header>
+        <div class="av-container">
+            <div class="av-glass-card">
+                <div class="av-history-bar" id="history-bar"></div>
+                <div id="cashout-banner-container"></div>
+                <div class="av-game-display">
+                    <canvas id="game-canvas"></canvas>
+                    <div class="av-multiplier-text" id="multiplier-display">WAITING...</div>
+                </div>
+                <div class="av-controls-panel">
+                    <div class="av-input-group">
+                        <label>কয়েন বেট পরিমাণ</label>
+                        <input type="number" id="bet-amount" value="10" min="10" step="10">
+                    </div>
+                    <button class="av-btn av-btn-action av-btn-bet" id="bet-btn">পরবর্তী রাউন্ডে বেট দিন</button>
+                </div>
+                <div class="av-live-bets-container">
+                    <div class="av-live-bets-header"><span>User</span><span>Coin Bet</span><span>Status / Win</span></div>
+                    <div class="av-live-bets-list" id="live-bets-list"><div class="av-no-bet-text">কোনো লাইভ বেট নেই</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOXING KING SCREEN -->
+    <div class="page-screen" id="boxing-king-screen">
+        <div class="bk-game-container" id="bkGameContainer">
+            <div class="bk-game-header"><h1>Boxing King</h1><span>LEFT TO RIGHT ONLY</span></div>
+            <div><button class="bk-fullscreen-toggle-btn" onclick="toggleBkFullScreen()">📱 ফুলস্ক্রিন করুন</button></div>
+            <div class="bk-multiplier-bar">
+                <div class="bk-mult-box active" id="bk-m1">1X</div>
+                <div class="bk-mult-box" id="bk-m2">2X</div>
+                <div class="bk-mult-box" id="bk-m3">3X</div>
+                <div class="bk-mult-box" id="bk-m5">5X</div>
+            </div>
+            <div class="bk-reels-board" id="bk-board"></div>
+            <div class="bk-status" id="bk-status">SPIN চাপুন! 🥊</div>
+            <div class="bk-dashboard">
+                <div class="bk-dash-box"><span class="bk-dash-label">Win</span><span id="bk-win-display" class="bk-dash-value">0.00</span></div>
+                <div class="bk-dash-box"><span class="bk-dash-label">Bet</span><span id="bk-bet-display" class="bk-dash-value">1.00</span></div>
+                <div class="bk-dash-box"><span class="bk-dash-label">Balance</span><span id="bk-bal" class="bk-dash-value">0.00</span></div>
+            </div>
+            <div class="bk-controls-panel">
+                <button class="bk-bet-btn" id="bk-bet-minus-btn" onclick="changeBkBet(-1)">-</button>
+                <div class="bk-spin-btn-container"><button class="bk-spin-btn" onclick="handleBkSpinClick()" id="bk-spin-btn">SPIN</button></div>
+                <button class="bk-bet-btn" id="bk-bet-plus-btn" onclick="changeBkBet(1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLOR GEMS SCREEN -->
+    <div class="page-screen" id="color-gems-screen">
+      <div class="cg-container" id="cgGameContainer">
+        <button class="cg-fs" onclick="toggleCgFullScreen()">📱 ফুলস্ক্রিন করুন</button>
+        <div class="cg-top">
+            <div class="cg-ways">2000 WAYS</div>
+            <div class="cg-mults" id="cg-mults"><span class="active">1X</span><span>2X</span><span>3X</span><span>5X</span></div>
+        </div>
+        <div class="cg-frame"><div class="cg-reels" id="cg-board"></div></div>
+        <div class="cg-actions">
+            <button class="cg-action" id="cg-extra-btn">⚡ Extra Bet</button>
+            <button class="cg-action buy" id="cg-buy-btn">💎 Buy Feature</button>
+        </div>
+        <div class="cg-info">
+            <div class="cg-box"><div class="cg-label">ব্যালেন্স</div><div class="cg-value" id="cg-bal">0.00</div></div>
+            <div class="cg-box"><div class="cg-label">উইন</div><div class="cg-value" id="cg-win">0.00</div></div>
+            <div class="cg-box"><div class="cg-label">মোট বেট</div><div class="cg-value" id="cg-bet">1.00</div></div>
+        </div>
+        <div class="cg-status" id="cg-status">SPIN চাপুন! 💎</div>
+        <div class="cg-controls">
+            <button class="cg-icon" id="cg-auto-btn">⚡</button>
+            <button class="cg-icon cg-minus" onclick="changeCgBet(-1)">−</button>
+            <button class="cg-spin" id="cg-spin" onclick="handleCgSpinClick()">↻</button>
+            <button class="cg-icon cg-plus" onclick="changeCgBet(1)">+</button>
+            <button class="cg-icon" id="cg-menu">☰</button>
+        </div>
+        <div class="cg-note">Gaming Zone • Color Gems • Virtual/Demo Coins</div>
+      </div>
+    </div>
+
+    <!-- RED vs BLUE SCREEN -->
+    <div class="page-screen" id="redblue-game-screen">
+        <div class="rb-container">
+            <div class="rb-title">🔴 RED vs BLUE 🔵</div>
+            <div class="rb-sub">FAIR SPIN • 20 SLOTS</div>
+            <div class="wheel-wrap">
+                <div class="pointer"></div>
+                <div class="wheel" id="rb-wheel"></div>
+                <div class="wheel-center">SPIN</div>
+            </div>
+            <div class="rb-select">
+                <button class="rb-red" onclick="chooseRbColor('red')">🔴 RED</button>
+                <button class="rb-blue" onclick="chooseRbColor('blue')">🔵 BLUE</button>
+                <button class="rb-black" onclick="chooseRbColor('black')">⚫ BLACK</button>
+                <button class="rb-white" onclick="chooseRbColor('white')">⚪ WHITE</button>
+            </div>
+            <div class="rb-row"><input type="number" id="rb-bet-amount" value="10" min="1" step="1" placeholder="কয়েন"></div>
+            <button class="rb-spin" id="rb-spin-btn" onclick="handleRbSpin()">🎡 BET / JOIN ROUND</button>
+            <div class="rb-balance">🪙 Main Balance: <span id="rb-balance">0.00</span></div>
+            <div class="rb-status" id="rb-status">একটি রং নির্বাচন করুন</div>
+            <div style="display:flex;justify-content:flex-end;align-items:center"><button class="sound-btn" onclick="toggleRbSound()">🔊 Sound ON</button></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const GAME_CONFIGS = [
+            { id: 'aviator', name: 'এভিয়েটর (Aviator)', provider: 'Spribe', screenId: 'aviator-game-screen', svgBg: 'linear-gradient(135deg, #1b020b, #4a0817)', svgIcon: '✈️' },
+            { id: 'boxing-king', name: 'বক্সিং কিং (Boxing King)', provider: 'Jili', screenId: 'boxing-king-screen', svgBg: 'linear-gradient(135deg, #2b033d, #6b0f4a)', svgIcon: '🥊' },
+            { id: 'color-gems', name: 'কালার জেমস (Color Gems)', provider: 'Gaming Zone', screenId: 'color-gems-screen', svgBg: 'linear-gradient(135deg, #123b78, #4a1f73)', svgIcon: '💎' },
+            { id: 'red-blue', name: 'রেড বনাম ব্লু (Red vs Blue)', provider: 'Gaming Zone', screenId: 'redblue-game-screen', svgBg: 'linear-gradient(135deg, #650b16, #102d67)', svgIcon: '🔴🔵' }
+        ];
+
+        function renderLobbyCards() {
+            const gridContainer = document.getElementById('lobby-games-grid');
+            gridContainer.innerHTML = '';
+            GAME_CONFIGS.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.onclick = () => openGameScreen(game.screenId);
+                card.innerHTML = `
+                    <div class="provider-tag">${game.provider}</div>
+                    <div class="card-image-box">
+                        <div class="card-visual-svg" style="background: ${game.svgBg}; font-size: 42px;">${game.svgIcon}</div>
+                    </div>
+                    <div class="game-title">${game.name}</div>
+                `;
+                gridContainer.appendChild(card);
+            });
+        }
+        renderLobbyCards();
+
+        function openGameScreen(screenId) {
+            document.querySelectorAll('.page-screen').forEach(scr => scr.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('global-back-btn').classList.remove('hidden');
+            if (screenId === 'aviator-game-screen') setTimeout(resizeCanvas, 150);
+            if (screenId === 'color-gems-screen') initCgBoard();
+        }
+
+        function openLobby() {
+            document.querySelectorAll('.page-screen').forEach(scr => scr.classList.remove('active'));
+            document.getElementById('lobby-screen').classList.add('active');
+            document.getElementById('global-back-btn').classList.add('hidden');
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyTOnCm5IuPcB-yvGjFl3KbwRVxNrcNSY",
+            authDomain: "ff-to-gaming-4ea1b.firebaseapp.com",
+            databaseURL: "https://ff-to-gaming-4ea1b-default-rtdb.firebaseio.com",
+            projectId: "ff-to-gaming-4ea1b"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        
+        const auth = firebase.auth();
+        const db = firebase.database();
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+        let currentUser = null, userDbRef = null, currentBalance = 0, isSignUp = false;
+        let currentLocalMult = 1.00, lastCrashedDisplayValue = 1.00;
+        let activeBet = 0, betRoundIndex = -1, hasCashedOut = false, cashedMultiplier = 0, cashedAmount = 0, lastProcessedRound = -1, isProcessingBet = false, historyArray = [];
+
+        const authModal = document.getElementById('auth-modal'), authError = document.getElementById('auth-error'), toggleAuthMode = document.getElementById('toggle-auth-mode'), authTitle = document.getElementById('auth-title'), authSubmitBtn = document.getElementById('auth-submit-btn');
+        const globalUserBar = document.getElementById('global-user-bar'), userEmailDisplay = document.getElementById('user-email-display');
+        const announceBar = document.getElementById('global-announce-bar');
+
+        db.ref('adminSettings/announcement').on('value', snap => {
+            const text = snap.val();
+            if (text && text.trim() !== "") {
+                announceBar.innerText = "📢 " + text;
+                announceBar.classList.remove('hidden');
+                document.body.classList.add('announce-visible');
+            } else {
+                announceBar.classList.add('hidden');
+                document.body.classList.remove('announce-visible');
+            }
+        });
+
+        const depositPaymentNumbers = { bkash: '', nagad: '' };
+        const depositMethodEl = document.getElementById('deposit-method'), depositPaymentLabelEl = document.getElementById('deposit-payment-label'), depositPaymentNumberEl = document.getElementById('admin-bkash-num');
+
+        function updateDepositPaymentUI() {
+            const method = depositMethodEl ? depositMethodEl.value : 'bkash';
+            const number = String(depositPaymentNumbers[method] || '').trim();
+            if (depositPaymentLabelEl) depositPaymentLabelEl.innerText = method === 'nagad' ? 'নগদ নম্বর:' : 'বিকাশ নম্বর:';
+            if (depositPaymentNumberEl) {
+                depositPaymentNumberEl.innerText = number || 'নম্বর সেট করা হয়নি';
+                depositPaymentNumberEl.style.color = number ? '#ffcc00' : '#ef9a9a';
+            }
+        }
+        db.ref('adminSettings/paymentNumberBkash').on('value', s => { depositPaymentNumbers.bkash = s.val() || ''; updateDepositPaymentUI(); });
+        db.ref('adminSettings/paymentNumberNagad').on('value', s => { depositPaymentNumbers.nagad = s.val() || ''; updateDepositPaymentUI(); });
+        if (depositMethodEl) depositMethodEl.addEventListener('change', updateDepositPaymentUI);
+
+        const depositModal = document.getElementById('deposit-modal'), withdrawModal = document.getElementById('withdraw-modal');
+        const depositMsg = document.getElementById('deposit-msg'), withdrawMsg = document.getElementById('withdraw-msg');
+
+        document.getElementById('deposit-btn').onclick = () => { if (!currentUser) return alert("প্রথমে Login করুন!"); depositMsg.innerText = ""; depositModal.classList.remove('hidden'); };
+        document.getElementById('close-deposit-btn').onclick = () => depositModal.classList.add('hidden');
+
+        document.getElementById('deposit-confirm-btn').onclick = () => {
+            if (!currentUser) return;
+            const amt = parseFloat(document.getElementById('deposit-amount').value), method = depositMethodEl.value, trxId = document.getElementById('deposit-trxid').value.trim();
+            if (isNaN(amt) || amt <= 0 || !trxId) { depositMsg.innerText = "সঠিক তথ্য দিন।"; return; }
+            db.ref('adminRequests/deposits').push({ uid: currentUser.uid, email: currentUser.email, amount: amt, method, trxId, status: 'pending', timestamp: Date.now() })
+            .then(() => { depositMsg.innerText = "ডিপোজিট রিকোয়েস্ট সফল হয়েছে।"; setTimeout(() => depositModal.classList.add('hidden'), 2000); });
+        };
+
+        document.getElementById('withdraw-btn').onclick = () => { if (!currentUser) return alert("প্রথমে Login করুন!"); withdrawMsg.innerText = ""; withdrawModal.classList.remove('hidden'); };
+        document.getElementById('close-withdraw-btn').onclick = () => withdrawModal.classList.add('hidden');
+
+        document.getElementById('withdraw-confirm-btn').onclick = () => {
+            if (!currentUser) return;
+            const amt = parseFloat(document.getElementById('withdraw-amount').value), method = document.getElementById('withdraw-method').value, accountNo = document.getElementById('withdraw-account').value.trim();
+            if (isNaN(amt) || amt <= 0 || !accountNo) { withdrawMsg.innerText = "সঠিক তথ্য দিন।"; return; }
+            db.ref('users/' + currentUser.uid + '/balance').once('value').then(snap => {
+                let bal = snap.val() || 0;
+                if (bal < amt) { withdrawMsg.innerText = "অপর্যাপ্ত ব্যালেন্স!"; return; }
+                db.ref('users/' + currentUser.uid + '/balance').set(bal - amt).then(() => {
+                    db.ref('adminRequests/withdrawals').push({ uid: currentUser.uid, email: currentUser.email, amount: amt, method, accountNo, status: 'pending', timestamp: Date.now() });
+                    withdrawMsg.innerText = "উইথড্র রিকোয়েস্ট জমা হয়েছে।"; setTimeout(() => withdrawModal.classList.add('hidden'), 2000);
+                });
+            });
+        };
+
+        function updateSharedBalanceUI() {
+            ['lobby-bal', 'bk-bal', 'rb-balance', 'cg-bal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = currentBalance.toFixed(2);
+            });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('lobby-user-uid').textContent = user.uid;
+                authModal.classList.add('hidden');
+                globalUserBar.classList.remove('hidden');
+                userEmailDisplay.innerText = user.email;
+                if (userDbRef) userDbRef.off();
+                userDbRef = db.ref('users/' + user.uid);
+                userDbRef.on('value', snap => {
+                    const data = snap.val();
+                    currentBalance = data ? (data.balance || 0) : 0;
+                    updateSharedBalanceUI();
+                });
+            } else {
+                currentUser = null;
+                document.getElementById('lobby-user-uid').textContent = '';
+                authModal.classList.remove('hidden');
+                globalUserBar.classList.add('hidden');
+                currentBalance = 0;
+                updateSharedBalanceUI();
+            }
+        });
+
+        toggleAuthMode.onclick = (e) => {
+            e.preventDefault();
+            isSignUp = !isSignUp;
+            authTitle.innerText = isSignUp ? "CREATE ACCOUNT" : "GAMING ZONE LOGIN";
+            authSubmitBtn.innerText = isSignUp ? "Sign Up" : "Login";
+            toggleAuthMode.innerText = isSignUp ? "Already have an account? Login" : "Create Account";
+        };
+
+        authSubmitBtn.onclick = () => {
+            const email = document.getElementById('auth-email').value.trim(), password = document.getElementById('auth-password').value.trim();
+            if (!email || !password) { authError.innerText = "সব ফিল্ড পূরণ করুন"; return; }
+            if (isSignUp) {
+                auth.createUserWithEmailAndPassword(email, password).then(c => db.ref('users/' + c.user.uid).set({ email, balance: 0, createdAt: Date.now() })).catch(e => authError.innerText = e.message);
+            } else {
+                auth.signInWithEmailAndPassword(email, password).catch(e => authError.innerText = e.message);
+            }
+        };
+
+        document.getElementById('logout-btn').onclick = () => auth.signOut().then(() => window.location.reload());
+
+        // --- AVIATOR LOGIC ---
+        const canvas = document.getElementById('game-canvas'), ctx = canvas.getContext('2d');
+        function resizeCanvas() { if (canvas && canvas.parentElement) { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; } }
+        window.addEventListener('resize', resizeCanvas);
+        function toggleAviatorFullScreen() {
+            if (!document.fullscreenElement) document.getElementById("aviator-game-screen").requestFullscreen().catch(() => {});
+            else document.exitFullscreen().catch(() => {});
+        }
+
+        function getDeterministicCrashPoint(roundIndex) {
+            let rand = (Math.sin(roundIndex * 12.9898 + 78.233) * 43758.5453) % 1;
+            if (rand < 0) rand += 1;
+            if (rand < 0.12) return 1.00 + (rand * 0.8);
+            if (rand < 0.65) return 1.10 + ((rand - 0.12) / 0.53) * 0.90;
+            return parseFloat((2.00 + rand * 5).toFixed(2));
+        }
+
+        function masterGameLoop() {
+            const CYCLE = 18000, WAIT = 3000, now = Date.now(), roundIdx = Math.floor(now / CYCLE), elapsed = now % CYCLE;
+            const targetCrash = getDeterministicCrashPoint(roundIdx);
+            if (roundIdx !== lastProcessedRound) {
+                lastProcessedRound = roundIdx; hasCashedOut = false; cashedMultiplier = 0;
+                if (betRoundIndex < roundIdx) { betRoundIndex = -1; activeBet = 0; }
+            }
+            if (elapsed < WAIT) {
+                document.getElementById('multiplier-display').innerText = "NEXT IN " + Math.ceil((WAIT - elapsed)/1000) + "s";
+                requestAnimationFrame(masterGameLoop);
+                return;
+            }
+            let fly = (elapsed - WAIT) / 1000, mult = 1.00 + Math.pow(fly, 1.25) * 0.12;
+            currentLocalMult = Math.min(mult, targetCrash);
+            document.getElementById('multiplier-display').innerText = currentLocalMult.toFixed(2) + "x";
+            requestAnimationFrame(masterGameLoop);
+        }
+        requestAnimationFrame(masterGameLoop);
+
+        // --- BOXING KING & COLOR GEMS SHARED CONFIG ---
+        let bkConfig = { enabled: true, minBet: 1, maxBet: 10, betOptions: [1,2,3,5,10], rtpFactor: 1.0 };
+        db.ref('config/boxingKing').on('value', snap => { if(snap.val()) bkConfig = Object.assign({}, bkConfig, snap.val()); applyCgConfigToUI(); });
+
+        let cgBoardState = Array(25).fill(''), cgWin = 0, cgMultiplierIndex = 0;
+        const CG_ITEMS = ['🔴','🟠','🟡','🟢','🔵','🟣','💎','⭐','🟤','⚫'], CG_MULTS = [1,2,3,5];
+        
+        function initCgBoard() {
+            const board = document.getElementById('cg-board');
+            if (!board) return;
+            board.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const c = document.createElement('div');
+                c.className = 'cg-cell'; c.id = 'cg-cell-' + i;
+                const s = document.createElement('span');
+                s.className = 'cg-symbol'; s.textContent = CG_ITEMS[Math.floor(Math.random() * CG_ITEMS.length)];
+                c.appendChild(s); cgBoardState[i] = s.textContent;
+            }
+        }
+
+        function updateCgUI() {
+            document.getElementById('cg-bal').innerText = currentBalance.toFixed(2);
+            document.getElementById('cg-win').innerText = cgWin.toFixed(2);
+        }
+
+        function handleCgSpinClick() {
+            if (!currentUser) { alert("প্রথমে Login করুন!"); return; }
+            const activeBet = 1.00;
+            if (currentBalance < activeBet) { alert("অপর্যাপ্ত ব্যালেন্স!"); return; }
+            
+            db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) - activeBet, (err, committed) => {
+                if (!committed) return;
+                cgWin = 0; cgMultiplierIndex = 0;
+                updateCgUI();
+                
+                // Shuffle board for spin effect
+                for (let i = 0; i < 25; i++) {
+                    cgBoardState[i] = CG_ITEMS[Math.floor(Math.random() * CG_ITEMS.length)];
+                }
+                initCgBoard();
+                document.getElementById('cg-status').innerText = "স্পিন সম্পন্ন হয়েছে! 💎";
+            });
+        }
+
+        function toggleCgFullScreen() {
+            if (!document.fullscreenElement) document.getElementById("cgGameContainer").requestFullscreen().catch(() => {});
+            else document.exitFullscreen().catch(() => {});
+        }
+
+        function applyCgConfigToUI() { updateCgUI(); }
+
+        // Red vs Blue Dummy Spin
+        function chooseRbColor(color) {
+            document.querySelectorAll('.rb-select button').forEach(b => b.classList.remove('chosen'));
+            event.target.classList.add('chosen');
+        }
+        function handleRbSpin() {
+            if (!currentUser) return alert("Login করুন!");
+            const bet = parseFloat(document.getElementById('rb-bet-amount').value);
+            if (currentBalance < bet) return alert("অপর্যাপ্ত ব্যালেন্স!");
+            db.ref('users/' + currentUser.uid + '/balance').transaction(b => b - bet + (Math.random() > 0.5 ? bet * 2 : 0), () => {
+                document.getElementById('rb-status').innerText = "স্পিন সম্পন্ন হয়েছে!";
+            });
+        }
+        function toggleRbSound() {}
+    </script>
 </body>
 </html>
