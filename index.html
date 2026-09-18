@@ -1770,7 +1770,8 @@
             '🥊': 1.2, '👑': 2.0, '🔥': 1.0, '⚡': 0.8, '👊': 0.6, '💎': 1.5, '🥇': 0.5
         };
         let BK_BET_OPTIONS = [1.00, 2.00, 3.00, 5.00, 10.00];
-        const BK_MULTIPLIER_STEPS = [1, 2, 3, 5];
+        let BK_MULTIPLIER_STEPS = [1, 2, 3, 5];
+        let bkMultiplierConfig = { m1: 1, m2: 2, m3: 3, m5: 5 };
 
         let bkCurrentBetIndex = 0;
         let bkIsSpinning = false;
@@ -1816,8 +1817,7 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
                     osc.start(now); osc.stop(now + 0.25);
                 } else if (type === 'win') {
-                    const mult = BK_MULTIPLIER_STEPS[bkCurrentMultiplierIndex];
-                    const baseFreq = mult === 2 ? 587.33 : mult === 3 ? 698.46 : mult === 5 ? 880.00 : 523.25;
+                    const baseFreq = [523.25, 587.33, 698.46, 880.00][Math.max(0, Math.min(bkCurrentMultiplierIndex, 3))];
                     const osc1 = bkAudioCtx.createOscillator();
                     const osc2 = bkAudioCtx.createOscillator();
                     const gain = bkAudioCtx.createGain();
@@ -1858,11 +1858,10 @@
 
         function updateBkMultiplierUI() {
             document.querySelectorAll('.bk-mult-box').forEach(b => b.classList.remove('active'));
-            const mult = BK_MULTIPLIER_STEPS[bkCurrentMultiplierIndex];
-            if (mult === 1) document.getElementById('bk-m1').classList.add('active');
-            else if (mult === 2) document.getElementById('bk-m2').classList.add('active');
-            else if (mult === 3) document.getElementById('bk-m3').classList.add('active');
-            else if (mult >= 5) document.getElementById('bk-m5').classList.add('active');
+            const ids = ['bk-m1', 'bk-m2', 'bk-m3', 'bk-m5'];
+            const id = ids[Math.max(0, Math.min(bkCurrentMultiplierIndex, ids.length - 1))];
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
         }
 
         function changeBkBet(direction) {
@@ -2523,106 +2522,50 @@ function rbLockAndSpin(){
             rbStartLiveRound();
         });
 
-/* ===== BOXING KING DISPLAY MULTIPLIER CONFIG =====
-   Transparent UI/display configuration only.
-   These values change the labels shown on the four multiplier boxes.
-   The actual game multiplier sequence/outcome logic remains unchanged.
+/* ===== BOXING KING MULTIPLIER CONFIG =====
+   Global multiplier values are used by both the visible buttons and the
+   Boxing King win calculation. RTP factor remains handled by the existing
+   bkConfig.rtpFactor calculation and is not replaced by this setting.
 */
-(function initBoxingKingDisplayConfig(){
-    const DEFAULT_BK_DISPLAY = { m1: 1, m2: 2, m3: 3, m5: 5 };
-    let globalBkDisplay = Object.assign({}, DEFAULT_BK_DISPLAY);
-    let userBkDisplay = null;
-    let globalBkDisplayRef = null;
-    let userBkDisplayRef = null;
-
-    function cleanValue(v, fallback) {
+(function(){
+    const DEFAULTS = {m1:1, m2:2, m3:3, m5:5};
+    function positive(v, fallback){
         const n = Number(v);
         return Number.isFinite(n) && n > 0 ? n : fallback;
     }
-
-    function normalizeDisplay(cfg) {
+    function normalize(cfg){
         cfg = cfg || {};
         return {
-            m1: cleanValue(cfg.m1, 1),
-            m2: cleanValue(cfg.m2, 2),
-            m3: cleanValue(cfg.m3, 3),
-            m5: cleanValue(cfg.m5, 5)
+            m1: positive(cfg.m1, DEFAULTS.m1),
+            m2: positive(cfg.m2, DEFAULTS.m2),
+            m3: positive(cfg.m3, DEFAULTS.m3),
+            m5: positive(cfg.m5, DEFAULTS.m5)
         };
     }
-
-    function formatDisplay(v) {
+    function format(v){
         const n = Number(v);
-        if (!Number.isFinite(n)) return "1X";
-        return (Number.isInteger(n) ? String(n) : String(Math.round(n * 100) / 100)) + "X";
+        return (Number.isInteger(n) ? String(n) : String(Math.round(n*100)/100)) + 'X';
     }
-
-    function applyDisplay() {
-        const cfg = normalizeDisplay(userBkDisplay || globalBkDisplay);
-        const map = {
-            "bk-m1": cfg.m1,
-            "bk-m2": cfg.m2,
-            "bk-m3": cfg.m3,
-            "bk-m5": cfg.m5
-        };
-        Object.keys(map).forEach(function(id) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = formatDisplay(map[id]);
+    function apply(cfg){
+        const c = normalize(cfg);
+        bkMultiplierConfig = c;
+        BK_MULTIPLIER_STEPS = [c.m1, c.m2, c.m3, c.m5];
+        const map = {m1:'bk-m1',m2:'bk-m2',m3:'bk-m3',m5:'bk-m5'};
+        Object.keys(map).forEach(k=>{
+            const el=document.getElementById(map[k]);
+            if(el) el.textContent=format(c[k]);
         });
+        if (bkCurrentMultiplierIndex >= BK_MULTIPLIER_STEPS.length) bkCurrentMultiplierIndex = 0;
+        updateBkMultiplierUI();
     }
-
-    function detachUser() {
-        if (userBkDisplayRef) {
-            userBkDisplayRef.off();
-            userBkDisplayRef = null;
-        }
-        userBkDisplay = null;
-        applyDisplay();
+    function start(){
+        if(typeof db === 'undefined' || !db.ref){ apply(DEFAULTS); return; }
+        db.ref('config/boxingKingMultipliers/global').on('value', function(snapshot){
+            apply(snapshot.val() || DEFAULTS);
+        }, function(){ apply(DEFAULTS); });
     }
-
-    function loadUser(uid) {
-        detachUser();
-        if (!uid || typeof db === "undefined") return;
-        userBkDisplayRef = db.ref("config/boxingKingDisplay/users/" + uid);
-        userBkDisplayRef.on("value", function(snapshot) {
-            userBkDisplay = snapshot.val() ? normalizeDisplay(snapshot.val()) : null;
-            applyDisplay();
-        }, function() {
-            userBkDisplay = null;
-            applyDisplay();
-        });
-    }
-
-    function loadGlobal() {
-        if (typeof db === "undefined") {
-            applyDisplay();
-            return;
-        }
-        if (globalBkDisplayRef) globalBkDisplayRef.off();
-        globalBkDisplayRef = db.ref("config/boxingKingDisplay/global");
-        globalBkDisplayRef.on("value", function(snapshot) {
-            globalBkDisplay = normalizeDisplay(snapshot.val());
-            applyDisplay();
-        }, function() {
-            globalBkDisplay = Object.assign({}, DEFAULT_BK_DISPLAY);
-            applyDisplay();
-        });
-    }
-
-    loadGlobal();
-
-    if (typeof auth !== "undefined" && auth.onAuthStateChanged) {
-        auth.onAuthStateChanged(function(user) {
-            loadUser(user ? user.uid : "");
-        });
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", applyDisplay);
-    } else {
-        applyDisplay();
-    }
+    start();
 })();
-
-    </script>
+</script>
 </body>
 </html>
