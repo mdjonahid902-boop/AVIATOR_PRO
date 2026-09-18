@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gaming Zone - DEMO Game Lobby</title>
+    <title>Gaming Zone - Professional Game Lobby</title>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -130,9 +130,6 @@
             cursor: pointer;
         }
         .lobby-uid-copy:active { transform: scale(.94); }
-        .user-rtp-ref-box{margin-top:6px;display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:8px;border:1px solid rgba(0,255,170,.22);background:rgba(0,255,170,.055);font-size:.54rem;font-weight:800;letter-spacing:.15px}
-        .user-rtp-ref-dot{width:6px;height:6px;border-radius:50%;background:#7f8a98}.user-rtp-ref-dot.active{background:#00e6a0;box-shadow:0 0 8px rgba(0,230,160,.8)}
-        .user-rtp-ref-label{color:#aeb9c8}.user-rtp-ref-value{color:#00e6a0}
         @media (max-width: 420px) {
             .lobby-header { padding: 9px 9px; }
             .lobby-uid-value { max-width: 105px; }
@@ -680,14 +677,10 @@
         .cg-frame{margin-top:7px;padding:6px;border-radius:13px;background:linear-gradient(135deg,#d6dbe3,#66738b 18%,#202a3c 48%,#aeb7c4 76%,#354158);border:2px solid #e6eaf0;box-shadow:0 0 12px #000,inset 0 0 9px #fff5}.cg-reels{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:#e9edf0;padding:2px;border-radius:8px;overflow:hidden}.cg-cell{position:relative;aspect-ratio:.82;border:1px solid #c5cbd3;border-radius:3px;background:linear-gradient(145deg,#f8f8f8,#b8bdc4);display:flex;align-items:center;justify-content:center;overflow:hidden}.cg-symbol{font-size:30px;line-height:1;filter:drop-shadow(0 3px 2px #555);position:relative;z-index:2}.cg-cell.rolling .cg-symbol{animation:cgRoll .13s linear infinite;filter:blur(2.4px)}@keyframes cgRoll{0%{transform:translateY(-14px) scale(.92)}50%{transform:translateY(14px) scale(1.05)}100%{transform:translateY(-14px) scale(.92)}}.cg-cell.winner{z-index:4;border:3px solid #ffe36c;box-shadow:0 0 12px #ffbd00,0 0 25px #fff6,inset 0 0 15px #ffd000;animation:cgWin .55s ease-in-out infinite alternate}@keyframes cgWin{to{transform:scale(1.045)}}
         .cg-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}.cg-action{min-height:39px;border-radius:8px;border:2px solid #54e7ad;color:#effff8;background:linear-gradient(#25d995,#08774f);font-weight:1000}.cg-action.buy{border-color:#c99cff;background:linear-gradient(#a65cff,#5920a7)}.cg-info{display:grid;grid-template-columns:repeat(3,1fr);margin-top:7px;padding:5px;border-radius:9px;background:linear-gradient(#301b3c,#130d1c);border:1px solid #8c4b57;box-shadow:inset 0 0 12px #000}.cg-box{text-align:center;border-right:1px solid #9c6b69}.cg-box:last-child{border-right:0}.cg-label{font-size:10px;color:#ffe28b}.cg-value{font-size:17px;font-weight:1000;color:#ffd83d;text-shadow:0 0 7px #ff9d00}.cg-status{height:22px;padding-top:4px;text-align:center;font-size:11px;color:#c7d6f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cg-controls{display:grid;grid-template-columns:43px 52px 1fr 52px 43px;align-items:center;gap:5px;padding:7px 5px;border-radius:14px;background:radial-gradient(circle,#183d61,#0a1629 70%);border:2px solid #3e7da7;box-shadow:inset 0 0 17px #000,0 0 10px #0c6e9d88}.cg-icon{width:43px;height:43px;border-radius:10px;border:2px solid #6c8aa7;background:linear-gradient(#274361,#111c2f);color:#fff;font-size:19px;font-weight:800}.cg-spin{width:78px;height:78px;justify-self:center;border-radius:50%;border:5px solid #ffe15a;background:radial-gradient(circle at 35% 28%,#ff9a39,#ed4b1d 43%,#a81612 73%,#5b0909);color:#fff;font-size:34px;box-shadow:0 0 18px #ff5c28,inset 0 0 13px #ffcf8a}.cg-spin:active{transform:scale(.91)}.cg-spin:disabled{opacity:.55;filter:grayscale(.3)}.cg-auto-on{border-color:#57ffa9!important;box-shadow:0 0 12px #21d37b88}.cg-note{text-align:center;font-size:8px;color:#73819b;margin-top:4px}.cg-fs{margin-bottom:6px;width:100%;padding:7px;border-radius:8px;border:1px solid #79a6ff;background:#17346b;color:#fff;font-weight:800}
         @media(max-width:360px){.cg-symbol{font-size:25px}.cg-spin{width:68px;height:68px;font-size:29px}.cg-controls{grid-template-columns:38px 45px 1fr 45px 38px}.cg-icon{width:38px}.cg-controls .cg-icon.cg-minus,.cg-controls .cg-icon.cg-plus{width:45px}}
-
-        .demo-top-banner{position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#ff6a00,#ffcc00);color:#111;text-align:center;font-weight:900;font-size:12px;padding:7px 10px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
-        .demo-page-notice{margin:10px auto 14px;max-width:720px;padding:10px 12px;border:1px solid rgba(255,204,0,.55);border-radius:12px;background:rgba(255,204,0,.08);color:#ffd76a;text-align:center;font-size:12px;font-weight:700}
 </style>
 </head>
 
 <body>
-<div class="demo-top-banner">DEMO MODE • VIRTUAL / DEMO COINS ONLY • NO REAL MONEY • User RTP Reference = Global or UID-specific</div>
 
     <button class="back-to-lobby-btn hidden" id="global-back-btn" onclick="openLobby()">
         ◀ LOBBY
@@ -719,7 +712,7 @@
     <!-- DEPOSIT MODAL -->
     <div class="av-modal-overlay hidden" id="deposit-modal">
         <div class="av-glass-card av-modal">
-            <h2>➕ কয়েন ডেমো ডিপোজিট</h2>
+            <h2>➕ কয়েন ডিপোজিট</h2>
             <div style="font-size:0.72rem;color:var(--text-dim);margin-bottom:10px;" id="admin-deposit-instruction">
                 <span id="deposit-payment-label">বিকাশ নম্বর:</span> <strong id="admin-bkash-num" style="color:#ffcc00;">লোড হচ্ছে...</strong><br>
                 টাকা পাঠিয়ে নিচের তথ্যগুলো দিন:
@@ -747,9 +740,9 @@
     <!-- WITHDRAW MODAL -->
     <div class="av-modal-overlay hidden" id="withdraw-modal">
         <div class="av-glass-card av-modal">
-            <h2>📤 কয়েন ডেমো উইথড্র</h2>
+            <h2>📤 কয়েন উইথড্র</h2>
             <div style="font-size:0.72rem;color:var(--text-dim);margin-bottom:10px;">
-                আপনার ব্যালেন্স থেকে কয়েন ডেমো উইথড্র করুন।
+                আপনার ব্যালেন্স থেকে কয়েন উইথড্র করুন।
             </div>
             <div class="form-group">
                 <select id="withdraw-method">
@@ -758,7 +751,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <input type="number" id="withdraw-amount" placeholder="ডেমো উইথড্র করার পরিমাণ" min="100">
+                <input type="number" id="withdraw-amount" placeholder="উইথড্র করার পরিমাণ" min="100">
             </div>
             <div class="form-group">
                 <input type="text" id="withdraw-account" placeholder="একাউন্ট নম্বর (যেমন: 017xxxxxxxx)" required>
@@ -782,11 +775,6 @@
                         <span class="lobby-uid-label">UID</span>
                         <span class="lobby-uid-value" id="lobby-user-uid">—</span>
                         <button type="button" class="lobby-uid-copy" id="copy-uid-btn" onclick="copyLobbyUid()">📋 COPY</button>
-                    </div>
-                    <div class="user-rtp-ref-box" id="user-rtp-ref-box" title="Firebase থেকে আপনার UID-এর জন্য সংরক্ষিত reference factor">
-                        <span class="user-rtp-ref-dot" id="user-rtp-dot"></span>
-                        <span class="user-rtp-ref-label" id="user-rtp-ref-label">DEMO User RTP:</span>
-                        <span class="user-rtp-ref-value" id="user-rtp-ref-value">…</span>
                     </div>
                 </div>
             </div>
@@ -1126,7 +1114,7 @@
         });
         document.getElementById('close-deposit-btn').onclick = () => depositModal.classList.add('hidden');
 
-        // --- ডেমো ডিপোজিট রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
+        // --- ডিপোজিট রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
         document.getElementById('deposit-confirm-btn').addEventListener('click', () => {
             if (!currentUser) return;
             const amt = parseFloat(document.getElementById('deposit-amount').value);
@@ -1136,7 +1124,7 @@
 
             if (!paymentNumber) {
                 depositMsg.style.color = "#ef9a9a";
-                depositMsg.innerText = method === 'nagad' ? "নগদ ডেমো ডিপোজিট বর্তমানে বন্ধ আছে।" : "বিকাশ ডেমো ডিপোজিট বর্তমানে বন্ধ আছে।";
+                depositMsg.innerText = method === 'nagad' ? "নগদ ডিপোজিট বর্তমানে বন্ধ আছে।" : "বিকাশ ডিপোজিট বর্তমানে বন্ধ আছে।";
                 return;
             }
 
@@ -1164,7 +1152,7 @@
             db.ref('adminRequests/deposits').push(depositData)
                 .then(() => {
                     depositMsg.style.color = "#81c784";
-                    depositMsg.innerText = "ডেমো ডিপোজিট রিকোয়েস্ট সফলভাবে জমা হয়েছে।";
+                    depositMsg.innerText = "ডিপোজিট রিকোয়েস্ট সফলভাবে জমা হয়েছে।";
                     setTimeout(() => {
                         depositModal.classList.add('hidden');
                         document.getElementById('deposit-amount').value = '500';
@@ -1186,7 +1174,7 @@
         });
         document.getElementById('close-withdraw-btn').onclick = () => withdrawModal.classList.add('hidden');
 
-        // --- ডেমো উইথড্র রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
+        // --- উইথড্র রিকোয়েস্ট সাবমিট (এডমিন পেন্ডিং) ---
         document.getElementById('withdraw-confirm-btn').addEventListener('click', () => {
             if (!currentUser) return;
             const amt = parseFloat(document.getElementById('withdraw-amount').value);
@@ -1228,7 +1216,7 @@
                     })
                     .then(() => {
                         withdrawMsg.style.color = "#81c784";
-                        withdrawMsg.innerText = "ডেমো উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে।";
+                        withdrawMsg.innerText = "উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে।";
                         setTimeout(() => {
                             withdrawModal.classList.add('hidden');
                             document.getElementById('withdraw-amount').value = '';
@@ -1250,36 +1238,6 @@
         const historyBar = document.getElementById('history-bar');
         const liveBetsList = document.getElementById('live-bets-list');
 
-        /* DEMO ONLY: User RTP is a reference/display value. It does not alter win probability or payouts. */
-        let userRtpReferenceFactor = null;
-        let userRtpListenerRef = null;
-        let userRtpListenerUid = '';
-        function setUserRtpReferenceUI(state, factor, message) {
-            const dot=document.getElementById('user-rtp-dot'),label=document.getElementById('user-rtp-ref-label'),value=document.getElementById('user-rtp-ref-value');
-            if(!dot||!label||!value)return; dot.classList.toggle('active',state==='active');
-            if(state==='active'){label.textContent='DEMO User RTP Reference:';value.textContent=Number(factor).toFixed(2)+'x';}
-            else if(state==='global'){const g=Number(bkConfig?.rtpFactor)>0?Number(bkConfig.rtpFactor):1;label.textContent='DEMO User RTP Reference:';value.textContent='Global '+g.toFixed(2)+'x';}
-            else if(state==='loading'){label.textContent=message||'DEMO User RTP:';value.textContent='…';}
-            else if(state==='error'){label.textContent=message||'DEMO User RTP: Firebase error';value.textContent='—';}
-            else{label.textContent=message||'DEMO User RTP: সেট করা নেই';value.textContent='—';}
-        }
-        function resetUserRtpReference(){
-            userRtpReferenceFactor=null;userRtpListenerUid='';
-            if(userRtpListenerRef){try{userRtpListenerRef.off();}catch(e){}userRtpListenerRef=null;}
-            setUserRtpReferenceUI('none',null,'DEMO User RTP: সেট করা নেই');
-        }
-        function loadUserRtpReference(uid){
-            resetUserRtpReference();const cleanUid=String(uid||'').trim();if(!cleanUid)return;
-            userRtpListenerUid=cleanUid;setUserRtpReferenceUI('loading',null,'DEMO User RTP:');
-            userRtpListenerRef=db.ref('config/boxingKingUserRtp/'+cleanUid);
-            userRtpListenerRef.on('value',function(snapshot){
-                if(userRtpListenerUid!==cleanUid)return;const factor=Number((snapshot.val()||{}).rtpFactor);
-                userRtpReferenceFactor=Number.isFinite(factor)&&factor>0?factor:null;
-                // DEMO ONLY: a UID-specific reference overrides the displayed global reference; it never changes game odds/payouts.
-                if(userRtpReferenceFactor!==null)setUserRtpReferenceUI('active',userRtpReferenceFactor);else setUserRtpReferenceUI('global');
-            },function(error){if(userRtpListenerUid!==cleanUid)return;userRtpReferenceFactor=null;setUserRtpReferenceUI('error',null,'DEMO User RTP: Firebase access error');console.warn('[Gaming Zone] User RTP reference load failed:',error);});
-        }
-
         let bkConfig = {
             enabled: true,
             minBet: 1,
@@ -1292,6 +1250,37 @@
         // Color Gems uses the SAME Boxing King configuration.
         // There is intentionally NO separate config/colorGems path.
         let cgConfig = bkConfig;
+
+        // User-specific RTP / Reference Factor loader.
+        // This reads the value saved by the Admin Panel for the logged-in UID.
+        // It is kept as a reference value only; existing game outcome logic is untouched.
+        let userRtpReferenceFactor = null;
+        let userRtpListenerRef = null;
+
+        function resetUserRtpReferenceFactor() {
+            userRtpReferenceFactor = null;
+            if (userRtpListenerRef) {
+                userRtpListenerRef.off();
+                userRtpListenerRef = null;
+            }
+        }
+
+        function loadUserRtpReferenceFactor(uid) {
+            resetUserRtpReferenceFactor();
+            if (!uid) return;
+
+            userRtpListenerRef = db.ref('config/boxingKingUserRtp/' + uid);
+            userRtpListenerRef.on('value', function(snapshot) {
+                const data = snapshot.val();
+                const factor = data && Number(data.rtpFactor);
+                userRtpReferenceFactor = Number.isFinite(factor) && factor > 0 ? factor : null;
+                console.log('[Gaming Zone] User-specific RTP/Reference Factor loaded:', userRtpReferenceFactor);
+            }, function(error) {
+                userRtpReferenceFactor = null;
+                console.warn('[Gaming Zone] User-specific RTP/Reference Factor load failed:', error);
+            });
+        }
+
         db.ref('config/boxingKing').on('value', function(snapshot) {
             const cfg = snapshot.val();
             if (cfg) {
@@ -1304,7 +1293,6 @@
                 }
             }
             cgConfig = bkConfig;
-            if (userRtpReferenceFactor === null && userRtpListenerUid) setUserRtpReferenceUI('global');
             applyBkConfigToUI();
             applyCgConfigToUI();
         });
@@ -1420,7 +1408,7 @@
             if (user) {
                 currentUser = user;
                 updateLobbyUid(user.uid);
-                loadUserRtpReference(user.uid);
+                loadUserRtpReferenceFactor(user.uid);
                 authModal.classList.add('hidden');
                 globalUserBar.classList.remove('hidden');
                 userEmailDisplay.innerText = user.email;
@@ -1443,7 +1431,7 @@
             } else {
                 currentUser = null;
                 updateLobbyUid('');
-                resetUserRtpReference();
+                resetUserRtpReferenceFactor();
                 userDbRef = null;
                 authModal.classList.remove('hidden');
                 globalUserBar.classList.add('hidden');
@@ -2534,6 +2522,107 @@ function rbLockAndSpin(){
             rbBuildExactWheel();
             rbStartLiveRound();
         });
+
+/* ===== BOXING KING DISPLAY MULTIPLIER CONFIG =====
+   Transparent UI/display configuration only.
+   These values change the labels shown on the four multiplier boxes.
+   The actual game multiplier sequence/outcome logic remains unchanged.
+*/
+(function initBoxingKingDisplayConfig(){
+    const DEFAULT_BK_DISPLAY = { m1: 1, m2: 2, m3: 3, m5: 5 };
+    let globalBkDisplay = Object.assign({}, DEFAULT_BK_DISPLAY);
+    let userBkDisplay = null;
+    let globalBkDisplayRef = null;
+    let userBkDisplayRef = null;
+
+    function cleanValue(v, fallback) {
+        const n = Number(v);
+        return Number.isFinite(n) && n > 0 ? n : fallback;
+    }
+
+    function normalizeDisplay(cfg) {
+        cfg = cfg || {};
+        return {
+            m1: cleanValue(cfg.m1, 1),
+            m2: cleanValue(cfg.m2, 2),
+            m3: cleanValue(cfg.m3, 3),
+            m5: cleanValue(cfg.m5, 5)
+        };
+    }
+
+    function formatDisplay(v) {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return "1X";
+        return (Number.isInteger(n) ? String(n) : String(Math.round(n * 100) / 100)) + "X";
+    }
+
+    function applyDisplay() {
+        const cfg = normalizeDisplay(userBkDisplay || globalBkDisplay);
+        const map = {
+            "bk-m1": cfg.m1,
+            "bk-m2": cfg.m2,
+            "bk-m3": cfg.m3,
+            "bk-m5": cfg.m5
+        };
+        Object.keys(map).forEach(function(id) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = formatDisplay(map[id]);
+        });
+    }
+
+    function detachUser() {
+        if (userBkDisplayRef) {
+            userBkDisplayRef.off();
+            userBkDisplayRef = null;
+        }
+        userBkDisplay = null;
+        applyDisplay();
+    }
+
+    function loadUser(uid) {
+        detachUser();
+        if (!uid || typeof db === "undefined") return;
+        userBkDisplayRef = db.ref("config/boxingKingDisplay/users/" + uid);
+        userBkDisplayRef.on("value", function(snapshot) {
+            userBkDisplay = snapshot.val() ? normalizeDisplay(snapshot.val()) : null;
+            applyDisplay();
+        }, function() {
+            userBkDisplay = null;
+            applyDisplay();
+        });
+    }
+
+    function loadGlobal() {
+        if (typeof db === "undefined") {
+            applyDisplay();
+            return;
+        }
+        if (globalBkDisplayRef) globalBkDisplayRef.off();
+        globalBkDisplayRef = db.ref("config/boxingKingDisplay/global");
+        globalBkDisplayRef.on("value", function(snapshot) {
+            globalBkDisplay = normalizeDisplay(snapshot.val());
+            applyDisplay();
+        }, function() {
+            globalBkDisplay = Object.assign({}, DEFAULT_BK_DISPLAY);
+            applyDisplay();
+        });
+    }
+
+    loadGlobal();
+
+    if (typeof auth !== "undefined" && auth.onAuthStateChanged) {
+        auth.onAuthStateChanged(function(user) {
+            loadUser(user ? user.uid : "");
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", applyDisplay);
+    } else {
+        applyDisplay();
+    }
+})();
+
     </script>
 </body>
 </html>
