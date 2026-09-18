@@ -151,12 +151,12 @@
 
       <div class="bk-preset-wrap" style="margin-top:18px;border:1px solid rgba(255,204,0,.28);background:rgba(255,204,0,.04)">
         <div class="bk-preset-title">🎯 Boxing King Multiplier — বাড়ানো / কমানো</div>
-        <div class="bk-help" style="margin-bottom:10px">শুধু Boxing King-এর 1X, 2X, 3X ও 5X multiplier-এর <b>display value</b> পরিবর্তন করবে। অন্য কোনো game বা payment feature পরিবর্তন করবে না।</div>
+        <div class="bk-help" style="margin-bottom:10px">শুধু Boxing King-এর multiplier values পরিবর্তন করবে। এখানে সেভ করা value-ই Boxing King-এর win calculation-এ ব্যবহার হবে। RTP factor-এর existing logic অপরিবর্তিত থাকবে। অন্য কোনো game বা payment feature পরিবর্তন করবে না।</div>
         <div class="form">
-          <div class="field"><label>1X দেখাবে</label><input id="bkDisplayM1" class="bk-input" type="number" min="0.01" step="0.01" value="1"></div>
-          <div class="field"><label>2X দেখাবে</label><input id="bkDisplayM2" class="bk-input" type="number" min="0.01" step="0.01" value="2"></div>
-          <div class="field"><label>3X দেখাবে</label><input id="bkDisplayM3" class="bk-input" type="number" min="0.01" step="0.01" value="3"></div>
-          <div class="field"><label>5X দেখাবে</label><input id="bkDisplayM5" class="bk-input" type="number" min="0.01" step="0.01" value="5"></div>
+          <div class="field"><label>Multiplier 1 (default 1X)</label><input id="bkDisplayM1" class="bk-input" type="number" min="0.01" step="0.01" value="1"></div>
+          <div class="field"><label>Multiplier 2 (default 2X)</label><input id="bkDisplayM2" class="bk-input" type="number" min="0.01" step="0.01" value="2"></div>
+          <div class="field"><label>Multiplier 3 (default 3X)</label><input id="bkDisplayM3" class="bk-input" type="number" min="0.01" step="0.01" value="3"></div>
+          <div class="field"><label>Multiplier 4 (default 5X)</label><input id="bkDisplayM5" class="bk-input" type="number" min="0.01" step="0.01" value="5"></div>
         </div>
         <div class="row" style="margin-top:12px">
           <button id="saveBkDisplayGlobal" class="btn primary" type="button">Global Save</button>
@@ -164,22 +164,6 @@
         </div>
         <div id="bkDisplayGlobalMsg" class="bk-help" style="margin-top:8px"></div>
 
-        <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)">
-          <div class="bk-preset-title">👤 নির্দিষ্ট User-এর জন্য আলাদা Display Multiplier</div>
-          <div class="bk-help" style="margin-bottom:10px">User নির্বাচন করলে তার জন্য আলাদা display value রাখা যাবে। না দিলে Global value ব্যবহার হবে।</div>
-          <div class="field" style="margin-bottom:10px"><label>User / UID</label><select id="bkDisplayUid" class="bk-input"><option value="">একজন ইউজার নির্বাচন করুন…</option></select></div>
-          <div class="form">
-            <div class="field"><label>1X →</label><input id="bkUserM1" class="bk-input" type="number" min="0.01" step="0.01" value="1"></div>
-            <div class="field"><label>2X →</label><input id="bkUserM2" class="bk-input" type="number" min="0.01" step="0.01" value="2"></div>
-            <div class="field"><label>3X →</label><input id="bkUserM3" class="bk-input" type="number" min="0.01" step="0.01" value="3"></div>
-            <div class="field"><label>5X →</label><input id="bkUserM5" class="bk-input" type="number" min="0.01" step="0.01" value="5"></div>
-          </div>
-          <div class="row" style="margin-top:12px">
-            <button id="saveBkDisplayUser" class="btn primary" type="button">Save for User</button>
-            <button id="clearBkDisplayUser" class="btn" type="button">Clear User</button>
-          </div>
-          <div id="bkDisplayUserMsg" class="bk-help" style="margin-top:8px"></div>
-        </div>
       </div>
 
       <div class="bk-row">
@@ -645,56 +629,70 @@ auth.onAuthStateChanged(async user=>{
   }
 })();
 
-/* ===== BOXING KING MULTIPLIER DISPLAY SETTINGS =====
-   Display configuration only. Existing game logic and all other admin features remain unchanged.
+/* ===== BOXING KING MULTIPLIER SETTINGS =====
+   Global gameplay multiplier configuration for Boxing King only.
+   The existing RTP factor is not changed here.
 */
 (function(){
   const BKD_DEFAULT={m1:1,m2:2,m3:3,m5:5};
-  const bkDNum=v=>{const n=Number(v); return Number.isFinite(n)&&n>0?n:null};
-  const bkDSet=(prefix,c)=>{
-    const ids={m1:prefix+'M1',m2:prefix+'M2',m3:prefix+'M3',m5:prefix+'M5'};
-    Object.keys(ids).forEach(k=>{const el=document.getElementById(ids[k]); if(el) el.value=String(c[k]??BKD_DEFAULT[k]);});
-  };
-  function renderBkDisplayUsers(){
-    const sel=document.getElementById('bkDisplayUid'); if(!sel) return;
-    const cur=sel.value; const rows=Object.entries(users||{}).sort((a,b)=>String(a[1]?.email||a[0]).localeCompare(String(b[1]?.email||b[0])));
-    sel.innerHTML='<option value="">একজন ইউজার নির্বাচন করুন…</option>';
-    rows.forEach(([uid,u])=>{const o=document.createElement('option');o.value=uid;o.textContent=`${u.email||uid} — ${uid}`;sel.appendChild(o);});
-    if(rows.some(([uid])=>uid===cur)) sel.value=cur;
+  function num(v){const n=Number(v);return Number.isFinite(n)&&n>0?n:null;}
+  function setFields(c){
+    ['m1','m2','m3','m5'].forEach(k=>{
+      const el=document.getElementById('bkDisplay'+k.toUpperCase());
+      if(el) el.value=String(c[k]??BKD_DEFAULT[k]);
+    });
   }
-  async function loadBkDisplayGlobal(){
-    try{const s=await db.ref('config/boxingKingDisplay/global').once('value'); const c=Object.assign({},BKD_DEFAULT,s.val()||{}); bkDSet('bkDisplay',c); document.getElementById('bkDisplayGlobalMsg').textContent='Global display values loaded.';}catch(e){document.getElementById('bkDisplayGlobalMsg').textContent='Load failed: '+(e.message||e);}
+  function readFields(){
+    const out={};
+    for(const k of ['m1','m2','m3','m5']){
+      const el=document.getElementById('bkDisplay'+k.toUpperCase());
+      const n=num(el?.value);
+      if(n===null)return null;
+      out[k]=n;
+    }
+    return out;
   }
-  async function loadBkDisplayUser(){
-    const uid=document.getElementById('bkDisplayUid')?.value; if(!uid){bkDSet('bkUser',BKD_DEFAULT); document.getElementById('bkDisplayUserMsg').textContent=''; return;}
-    try{const s=await db.ref(`config/boxingKingDisplay/users/${uid}`).once('value'); const c=Object.assign({},BKD_DEFAULT,s.val()||{}); bkDSet('bkUser',c); document.getElementById('bkDisplayUserMsg').textContent=s.exists()?'Saved user display values loaded.':'No user override; Global will apply.';}catch(e){document.getElementById('bkDisplayUserMsg').textContent='Load failed: '+(e.message||e);}
-  }
-  function readBkDisplay(prefix){
-    const out={}; for(const k of ['m1','m2','m3','m5']){const el=document.getElementById(prefix+(k==='m1'?'M1':k==='m2'?'M2':k==='m3'?'M3':'M5')); const n=bkDNum(el?.value); if(n===null) return null; out[k]=n;} return out;
+  async function loadBkMultipliers(){
+    try{
+      const snap=await db.ref('config/boxingKingMultipliers/global').once('value');
+      const cfg=Object.assign({},BKD_DEFAULT,snap.val()||{});
+      setFields(cfg);
+      const msg=document.getElementById('bkDisplayGlobalMsg');
+      if(msg)msg.textContent=snap.exists()?'Current Boxing King gameplay multipliers loaded.':'Using default 1X / 2X / 3X / 5X.';
+    }catch(e){
+      const msg=document.getElementById('bkDisplayGlobalMsg');
+      if(msg)msg.textContent='Load failed: '+(e.message||e);
+    }
   }
   document.getElementById('saveBkDisplayGlobal')?.addEventListener('click',async()=>{
-    const data=readBkDisplay('bkDisplay'); if(!data){toast('সব multiplier-এর valid positive value দিন');return;}
-    try{data.updatedAt=Date.now(); await db.ref('config/boxingKingDisplay/global').set(data); await audit('update_boxing_king_multiplier_display_global','config/boxingKingDisplay/global',JSON.stringify(data)); document.getElementById('bkDisplayGlobalMsg').textContent='Saved successfully.'; toast('Boxing King multiplier display saved');}catch(e){document.getElementById('bkDisplayGlobalMsg').textContent='Save failed: '+(e.message||e);toast(e.message||e);}
+    const data=readFields();
+    if(!data){toast('সব multiplier-এর valid positive value দিন');return;}
+    try{
+      data.updatedAt=Date.now();
+      await db.ref('config/boxingKingMultipliers/global').set(data);
+      await audit('update_boxing_king_multipliers_global','config/boxingKingMultipliers/global',JSON.stringify(data));
+      const msg=document.getElementById('bkDisplayGlobalMsg');
+      if(msg)msg.textContent='Saved. New Boxing King spins will use these values.';
+      toast('Boxing King multipliers saved');
+    }catch(e){
+      const msg=document.getElementById('bkDisplayGlobalMsg');
+      if(msg)msg.textContent='Save failed: '+(e.message||e);
+      toast(e.message||e);
+    }
   });
   document.getElementById('resetBkDisplayGlobal')?.addEventListener('click',async()=>{
-    try{await db.ref('config/boxingKingDisplay/global').set(Object.assign({},BKD_DEFAULT,{updatedAt:Date.now()})); bkDSet('bkDisplay',BKD_DEFAULT); await audit('reset_boxing_king_multiplier_display_global','config/boxingKingDisplay/global',''); document.getElementById('bkDisplayGlobalMsg').textContent='Reset to 1X / 2X / 3X / 5X.'; toast('Multiplier display reset');}catch(e){toast(e.message||e);}
+    try{
+      const data=Object.assign({},BKD_DEFAULT,{updatedAt:Date.now()});
+      await db.ref('config/boxingKingMultipliers/global').set(data);
+      setFields(data);
+      const msg=document.getElementById('bkDisplayGlobalMsg');
+      if(msg)msg.textContent='Reset to 1X / 2X / 3X / 5X.';
+      await audit('reset_boxing_king_multipliers_global','config/boxingKingMultipliers/global','');
+      toast('Boxing King multipliers reset');
+    }catch(e){toast(e.message||e);}
   });
-  document.getElementById('bkDisplayUid')?.addEventListener('change',()=>loadBkDisplayUser());
-  document.getElementById('saveBkDisplayUser')?.addEventListener('click',async()=>{
-    const uid=document.getElementById('bkDisplayUid')?.value; if(!uid){toast('একজন ইউজার নির্বাচন করুন');return;}
-    const data=readBkDisplay('bkUser'); if(!data){toast('সব multiplier-এর valid positive value দিন');return;}
-    try{data.updatedAt=Date.now(); await db.ref(`config/boxingKingDisplay/users/${uid}`).set(data); await audit('update_boxing_king_multiplier_display_user',uid,JSON.stringify(data)); document.getElementById('bkDisplayUserMsg').textContent='Saved for selected user.'; toast('User multiplier display saved');}catch(e){document.getElementById('bkDisplayUserMsg').textContent='Save failed: '+(e.message||e);toast(e.message||e);}
-  });
-  document.getElementById('clearBkDisplayUser')?.addEventListener('click',async()=>{
-    const uid=document.getElementById('bkDisplayUid')?.value; if(!uid){toast('একজন ইউজার নির্বাচন করুন');return;}
-    if(!confirm('এই User-এর আলাদা multiplier display মুছে Global value ব্যবহার করতে দেবেন?')) return;
-    try{await db.ref(`config/boxingKingDisplay/users/${uid}`).remove(); await audit('clear_boxing_king_multiplier_display_user',uid,''); bkDSet('bkUser',BKD_DEFAULT); document.getElementById('bkDisplayUserMsg').textContent='Cleared; Global value will apply.'; toast('User multiplier display cleared');}catch(e){toast(e.message||e);}
-  });
-  const oldRenderConfig=window.renderConfig;
-  window.renderConfig=function(){ if(typeof oldRenderConfig==='function') oldRenderConfig(); renderBkDisplayUsers(); loadBkDisplayGlobal(); };
-  setTimeout(()=>{renderBkDisplayUsers();loadBkDisplayGlobal();},250);
+  loadBkMultipliers();
 })();
-
 
 </script>
 </body>
